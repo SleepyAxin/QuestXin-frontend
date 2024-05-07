@@ -44,12 +44,13 @@ export default
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+
 }
 
 .LoginBox
 {
-  width: 300px;
+  width: 800px;
+  height: 400px;
   padding: 20px;
   background-color: #f5f5f5;
   border-radius: 4px;
@@ -75,7 +76,7 @@ export default
 
 .LoginButton
 {
-  padding: 8px 10px; /* 修改为 8px 10px */
+  padding: 8px 10px;
   background-color: #007bff;
   color: #fff;
   border: none;

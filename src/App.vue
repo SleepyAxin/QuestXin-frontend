@@ -1,14 +1,12 @@
 <template>
-  <div class = "Background">
-    <nav>
-      <router-link to = "/">首页</router-link>
-      |
-      <router-link to = "/about">关于</router-link>
-      |
-      <router-link to = "/login">登录</router-link>
-    </nav>
-    <router-view/>
-  </div>
+  <nav>
+    <router-link to = "/">首页</router-link>
+    |
+    <router-link to = "/about">关于</router-link>
+    |
+    <router-link to = "/login">登录</router-link>
+  </nav>
+  <router-view/>
 </template>
 
 <style>
@@ -35,11 +33,5 @@ nav a
 nav a.router-link-exact-active
 {
   color: #42b983;
-}
-
-.Background
-{
-  /* 渐变色的起始颜色和结束颜色可以根据需要进行调整 */
-  background: "./assets/logo.png";
 }
 </style>
