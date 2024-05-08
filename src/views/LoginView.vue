@@ -108,9 +108,8 @@ export default
 .InputField
 {
   width: 80%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
+  background-color:transparent;
 }
 
 .LoginButton
