@@ -1,25 +1,33 @@
 <template>
-  <div class="LoginContainer">
-    <div class="LoginBox">
+  <div class="RegisterContainer">
+    <div class="RegisterBox">
       <form class="ImageForm">
       </form>
       <!-- 分隔线 -->
       <div class="Separator">
       </div>
-      <form class="LoginForm">
-        <h2 class="LoginTitle">登录</h2>
+      <form class="RegisterForm">
+        <h2 class="RegisterTitle">注册</h2>
         <div class="FormGroup">
           <!-- 用户图标 -->
           <span class="IconFont">&#xe656;</span>
-          <input class="InputField" type="text" id="username" v-model="username" placeholder="请输入用户名">
+          <input class="InputField" type="text" id="username"
+                 v-model="username" placeholder="请输入用户名">
         </div>
         <div class="FormGroup">
           <!-- 密码图标 -->
           <span class="IconFont">&#xe64d;</span>
-          <input class="InputField" type="password" id="password" v-model="password" placeholder="请输入密码">
+          <input class="InputField" type="password" id="password"
+                 v-model="password" placeholder="请输入密码">
         </div>
-        <button type="submit" class="LoginButton" @click="login">登录</button>
-        <button class="ToRegisterButton" @click="toRegister">没有账号？点此注册</button>
+        <div class="FormGroup">
+          <!-- 确认密码图标 -->
+          <span class="IconFont">&#xe64d;</span>
+          <input class="InputField" type="password" id="passwordAgain"
+                 v-model="passwordAgain" placeholder="请再次输入密码">
+        </div>
+        <button type="submit" class="RegisterButton" @click="Register">注册</button>
+        <button class="ToLoginButton" @click="toLogin">已有账号？点此登录</button>
       </form>
     </div>
   </div>
@@ -32,28 +40,30 @@ export default
   {
     return {
       username: '',
-      password: ''
+      password: '',
+      passwordAgain: ''
     }
   },
   methods:
       {
-        // 登录逻辑
-        login()
+        // 注册逻辑
+        Register()
         {
-          console.log('登录信息:', this.username, this.password)
+          if (this.password !== this.passwordAgain)
+            console.log("注册成功！")
         },
 
         // 跳转到注册页
-        toRegister()
+        toLogin()
         {
-          this.$router.push("/register");
+          this.$router.push("/login");
         }
       }
 }
 </script>
 
 <style scoped>
-.LoginContainer
+.RegisterContainer
 {
   position: fixed;
   top: 50%;
@@ -66,7 +76,7 @@ export default
   width: 800px;
 }
 
-.LoginBox
+.RegisterBox
 {
   width: 100%;
   height: 100%;
@@ -87,17 +97,18 @@ export default
   background-color: #007bff;
 }
 
-.LoginTitle
+.RegisterTitle
 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.LoginForm
+.RegisterForm
 {
   width: 100%;
   display: flex;
   flex-direction: column;
+
 }
 
 .FormGroup
@@ -113,7 +124,7 @@ export default
   border-radius: 4px;
 }
 
-.LoginButton
+.RegisterButton
 {
   padding: 8px 40px; /* 缩小按钮宽度 */
   background-color: #007bff;
@@ -125,14 +136,14 @@ export default
   margin: auto;
 }
 
-.ToRegisterButton
+.ToLoginButton
 {
   background-color: transparent;
   border: none;
   transform: translateY(200%);
 }
 
-.ToRegisterButton::after
+.ToLoginButton::after
 {
   content: '';
   position: absolute;
@@ -145,7 +156,7 @@ export default
   transition: transform 0.3s ease-in-out;    /* 添加过渡效果 */
 }
 
-.ToRegisterButton:hover::after
+.ToLoginButton:hover::after
 {
   transform: scaleX(0.5); /* 鼠标移至按钮时显示下划线 */
 }
@@ -158,6 +169,7 @@ export default
   background: #f5f5f5 url("../assets/quest.svg") no-repeat;
   background-size: cover;
   border-radius: 4px;
+
 }
 
 .IconFont

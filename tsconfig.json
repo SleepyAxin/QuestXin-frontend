@@ -1,5 +1,7 @@
 {
-  "compilerOptions": {
+  "compilerOptions":
+  {
+    "resolveJsonModule": true,    // 处理json文件
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -12,30 +14,36 @@
     "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
+    "types":
+    [
       "webpack-env",
       "jest"
     ],
-    "paths": {
-      "@/*": [
+    "paths":
+    {
+      "@/*":
+      [
         "src/*"
       ]
     },
-    "lib": [
+    "lib":
+    [
       "esnext",
       "dom",
       "dom.iterable",
       "scripthost"
     ]
   },
-  "include": [
+  "include":
+  [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "exclude": [
+  "exclude":
+  [
     "node_modules"
   ]
 }

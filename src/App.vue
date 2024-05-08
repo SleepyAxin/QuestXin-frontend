@@ -2,14 +2,19 @@
   <nav>
     <router-link to = "/">首页</router-link>
     |
-    <router-link to = "/about">关于</router-link>
+    <router-link to =  "/about"  >关于</router-link>
     |
     <router-link to = "/login">登录</router-link>
+    |
+    <router-link to = "/register">注册</router-link>
   </nav>
   <router-view/>
 </template>
 
 <style>
+@import url("css/Background.css");    /* 背景图片 */
+@import url("css/IconFont.css");    /* 图标文件 */
+
 #app
 {
   font-family: Avenir, Helvetica, Arial, sans-serif;
