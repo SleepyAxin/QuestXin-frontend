@@ -1,0 +1,112 @@
+.auth-icon-user
+{
+  background: var(--icon-user);
+}
+
+.auth-icon-password
+{
+  background: var(--icon-password);
+}
+
+.auth-icon
+{
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  color: var(--color-fill);
+}
+
+/* 登录/注册界面卡片 */
+.auth-box
+{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  height: 400px;
+  width: 750px;
+  padding: 20px;
+  background-color: var(--color-base);
+  transform: translate(-50%, -50%);
+  border-radius: var(--border-radius);;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 分隔线 */
+.separator
+{
+  width: 0.75%;
+  height: 100%;
+
+  margin: 2.5% 2.5%; /* 设置上下的边距 */
+  background-color: var(--color-fill);
+}
+
+/* 登录/注册信息集群 */
+.auth-form
+{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 登录/注册卡片背景图片 */
+.image-form
+{
+  width: 175%;
+  height: 100%;
+  padding: 20px;
+  background: var(--color-base) var(--image-quset) no-repeat;
+  background-size: cover;
+  border-radius: 4px;
+}
+
+/* 登录/注册标题 */
+.auth-title
+{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group
+{
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 输入/输出框 */
+.input-field
+{
+  width: 80%;
+  border: none;
+  background-color: transparent;
+}
+
+/* 跳转按钮 */
+.auth-to-button
+{
+  transform: translateY(200%);
+}
+
+.auth-to-button::after
+{
+  height: 7.5%;
+}
+
+.auth-to-button:hover::after
+{
+  transform: scaleX(0.5); /* 鼠标移至按钮时显示下划线 */
+}
+
+input
+{
+  padding: 8px;
+  border: 1px solid var(--color-base);
+  border-radius: 4px;
+}

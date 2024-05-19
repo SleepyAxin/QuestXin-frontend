@@ -1,0 +1,24 @@
+:root
+{
+    /* 全局变量 */
+    --color-base: #f5f5f5;    /* 基本背景颜色 */
+    --color-fill: #007bff;    /* 填充背景颜色 */
+    --color-active: #0056b3;    /* 激活背景颜色 */
+
+    --color-success: #007bff;
+    --color-warning: #FFD800;
+    --color-error: #D81E06;
+
+    --border-radius: 5px;    /* 圆角半径 */
+
+    --image-background: url('@/assets/Background.jpg');    /* 网站背景图片 */
+    --image-quset: url('@/assets/Quest.svg');    /* 登录/注册盒子背景图片 */
+    --image-logo: url('@/assets/Logo.png');    /* LOGO */
+
+    --icon-user: url('@/assets/icon/User.svg');    /* 用户图标 */
+    --icon-password: url('@/assets/icon/Password.svg');    /* 密码图标 */
+    --icon-normal: url('@/assets/icon/Normal.svg');    /* 弹窗 一般图标 */
+    --icon-success: url('@/assets/icon/Success.svg');    /* 弹窗 成功图标 */
+    --icon-warning: url('@/assets/icon/Warning.svg');    /* 弹窗 警告图标 */
+    --icon-error: url('@/assets/icon/Error.svg');    /* 弹窗 错误图标 */
+}

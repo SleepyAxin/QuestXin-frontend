@@ -1,0 +1,45 @@
+/* 按钮基本样式 */
+.button-base
+{
+    padding: 8px 40px; /* 缩小按钮宽度 */
+    background-color: var(--color-fill);
+    color: var(--color-base);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    width: auto; /* 恢复按钮宽度自适应 */
+    margin: auto;
+}
+
+.button-base:hover
+{
+    background: var(--color-active);
+}
+
+/* 跳转按钮基本样式 */
+.to-button-base
+{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.to-button-base::after
+{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;    /* 控制下划线的位置 */
+
+    width: 100%;
+
+    background-color: var(--color-fill);    /* 设置下划线颜色 */
+
+    transition: transform 0.3s ease-in-out;    /* 添加过渡效果 */
+    transform: scaleX(0);    /* 初始状态下划线不可见 */
+}
+
+.to-button-base:hover::after
+{
+    transform: scaleX(1);    /* 鼠标移至按钮时显示下划线 */
+}

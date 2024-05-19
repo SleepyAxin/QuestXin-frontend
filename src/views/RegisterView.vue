@@ -1,198 +1,179 @@
 <template>
-  <div class="RegisterContainer">
-    <div class="RegisterBox">
-      <form class="ImageForm">
-      </form>
-      <!-- 分隔线 -->
-      <div class="Separator">
+  <div class="auth-box">
+    <form class="image-form"></form>
+    <!-- 分隔线 -->
+    <div class="separator"></div>
+    <form class="auth-form">
+      <h2 class="auth-title">注册</h2>
+      <div class="form-group">
+        <!-- 用户图标 -->
+        <span class="auth-icon-user auth-icon"></span>
+        <input class="input-field" type="email" id="email"
+               v-model="email" placeholder="请输入邮箱">
       </div>
-      <form class="RegisterForm">
-        <h2 class="RegisterTitle">注册</h2>
-        <div class="FormGroup">
-          <!-- 用户图标 -->
-          <span class="IconFont">&#xe656;</span>
-          <input class="InputField" type="text" id="username"
-                 v-model="username" placeholder="请输入用户名">
-        </div>
-        <div class="FormGroup">
-          <!-- 密码图标 -->
-          <span class="IconFont">&#xe64d;</span>
-          <input class="InputField" type="password" id="password"
-                 v-model="password" placeholder="请输入密码">
-        </div>
-        <div class="FormGroup">
-          <!-- 确认密码图标 -->
-          <span class="IconFont">&#xe64d;</span>
-          <input class="InputField" type="password" id="passwordAgain"
-                 v-model="passwordAgain" placeholder="请再次输入密码">
-        </div>
-        <button type="submit" class="RegisterButton" @click="Register">注册</button>
-        <button class="ToLoginButton" @click="toLogin">已有账号？点此登录</button>
-      </form>
-    </div>
+      <div class="form-group">
+        <!-- 密码图标 -->
+        <span class="auth-icon-password auth-icon"></span>
+        <input class="input-field" type="password" id="password"
+               v-model="password" placeholder="请输入密码">
+      </div>
+      <div class="form-group">
+        <!-- 确认密码图标 -->
+        <span class="auth-icon-password auth-icon"></span>
+        <input class="input-field" type="password" id="passwordAgain"
+               v-model="passwordAgain" placeholder="请再次输入密码">
+      </div>
+      <button type="submit" class="button-base auth-button" @click.prevent="postRegister">注册</button>
+      <button class="to-button-base auth-to-button" @click.prevent="toLogin">已有账号？点此登录</button>
+    </form>
+    <!-- 使用 Modal 组件 -->
+    <Modal
+        v-if="modal_show"
+        :type="modal_type"
+        :message="modal_message"
+        @close="modal_show = false"
+     visible/>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
+import Modal from '@/components/Modal.vue';
+
+import Router from '@/components/js/Router.js';
+import { URL_POST_register } from "@/components/js/API.js";
+
 export default
 {
   data()
   {
     return {
-      username: '',
+      email: '',
       password: '',
-      passwordAgain: ''
+      passwordAgain: '',
+
+      /* 弹出式窗口 */
+      modal_show: false,
+      modal_type: '',
+      modal_message: ''
     }
   },
+
+  mixins: [ Router, Modal ],
+
+  components: { Modal },
+
   methods:
       {
-        // 注册逻辑
-        Register()
+        /* 调用弹窗 */
+        showModal(type, message, show)
         {
-          if (this.password !== this.passwordAgain)
-            console.log("注册成功！")
+          this.modal_type = type;
+          this.modal_message = message;
+          this.modal_show = show;
         },
 
-        // 跳转到注册页
-        toLogin()
+        /* 检测用户信息合法性 */
+        checkAuthInfo()
         {
-          this.$router.push("/login");
+          if (this.email === '' || this.password === '' || this.passwordAgain === '')
+          {
+            this.showModal('error', '邮箱或密码不可为空', true);
+
+            return false;
+          }
+
+          if (this.password !== this.passwordAgain)
+          {
+            this.showModal('error', '密码不一致，请重新输入', true);
+
+            this.password = '';
+            this.passwordAgain = '';
+
+            return false
+          }
+
+          if (this.password.length < 3)
+          {
+            this.showModal('error', '密码不得少于三个字符', true);
+
+            return false;
+          }
+
+          return true;
+        },
+
+        /* 请求注册 */
+        async postRegister()
+        {
+          if (!this.checkAuthInfo())
+            return;
+
+          const data =
+              {
+                "email": this.email,
+                "password": this.password,
+                "is_active": true,
+                "is_superuser": false,
+                "is_verified": false
+              };
+
+          try
+          {
+            const response = await axios.post
+            (
+                URL_POST_register,
+                data,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 201)
+            {
+              console.log('用户注册成功：', response.data);
+
+              this.showModal('success', '注册成功，点击前往登录', true);
+            }
+          }
+          catch (error)
+          {
+            console.error('用户注册失败：', error.response ? error.response.data : error.message);
+
+            switch (error.response.status)
+            {
+              case 400:
+              {
+                this.showModal('error', '注册失败，邮箱已被注册', true);
+                break;
+              }
+              case 422:
+              {
+                this.showModal('error', '注册失败，邮箱名不合法', true);
+                break;
+              }
+              default:
+              {
+                this.showModal('error', '注册失败', true);
+                break;
+              }
+            }
+          }
+        }
+      },
+
+  /* 监听 */
+  watch:
+      {
+        modal_show(value)
+        {
+          /* 当注册成功且弹出窗口关闭后跳转到登录界面 */
+          if (this.modal_type === 'success' && value === false)
+            this.toLogin();
         }
       }
 }
 </script>
 
 <style scoped>
-.RegisterContainer
-{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-  width: 800px;
-}
-
-.RegisterBox
-{
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-}
-
-.Separator
-{
-  width: 0.5%;
-  height: 100%;
-
-  margin: 2.5% 2.5%; /* 设置上下的边距 */
-  background-color: #007bff;
-}
-
-.RegisterTitle
-{
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.RegisterForm
-{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-}
-
-.FormGroup
-{
-  margin-bottom: 15px;
-}
-
-.InputField
-{
-  width: 80%;
-  border: none;
-  background-color:transparent;
-}
-
-.RegisterButton
-{
-  padding: 8px 40px; /* 缩小按钮宽度 */
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: auto; /* 恢复按钮宽度自适应 */
-  margin: auto;
-}
-
-.ToLoginButton
-{
-  background-color: transparent;
-  border: none;
-  transform: translateY(200%);
-}
-
-.ToLoginButton::after
-{
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;    /* 控制下划线的位置 */
-  width: 100%;
-  height: 7.5%;
-  background-color: #007bff;    /* 设置下划线颜色 */
-  transform: scaleX(0);    /* 初始状态下下划线不可见 */
-  transition: transform 0.3s ease-in-out;    /* 添加过渡效果 */
-}
-
-.ToLoginButton:hover::after
-{
-  transform: scaleX(0.5); /* 鼠标移至按钮时显示下划线 */
-}
-
-.ImageForm
-{
-  width: 175%;
-  height: 100%;
-  padding: 20px;
-  background: #f5f5f5 url("../assets/quest.svg") no-repeat;
-  background-size: cover;
-  border-radius: 4px;
-
-}
-
-.IconFont
-{
-  font-family: "IconFont" !important;
-  font-size: 20px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  height:22px;
-  color:#007bff;
-  margin-right:10px;
-  margin-top:3px;
-}
-
-label
-{
-  font-weight: bold;
-}
-
-input
-{
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+@import url("../components/css/Style-Auth.css");
 </style>
