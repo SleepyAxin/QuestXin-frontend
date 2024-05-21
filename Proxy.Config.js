@@ -1,10 +1,10 @@
-const BASE_URL = 'http://127.0.0.1:8000'    /* 目标接口的域名和端口号 */
+const BASE_URL = 'http://127.0.0.1:8000/'    /* 目标接口的域名和端口号 */
 
 module.exports =
     {
         host: 'localhost',    /* 本地主机 */
         port: 8080,    /* 端口号的配置 */
-        open: true,  /* 自动打开浏览器 */
+        open: false,  /* 自动打开浏览器 */
         proxy:
             {
                 '/auth':    /*  拦截/auth接口 */

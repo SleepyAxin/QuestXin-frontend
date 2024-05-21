@@ -5,57 +5,92 @@
       <button class="web-title" @click="toHome">问卷鑫</button>
     </div>
     <!-- 检测到用户登录，显示用户操作按钮 -->
-    <div v-if="user_info !== null" class="right-box-user">
-
+    <div v-if="user_info !== null" class="right-box">
+      <div v-if="this.$route.name !== 'quest'" class="container">
+        <span class="icon-user icon"></span>
+        <button class="to-button-base button" @click="toQuest">问卷管理</button>
+      </div>
+      <div class="blank"></div>
+      <div class="container">
+        <span class="icon-user icon"></span>
+        <button class="to-button-base button" @click="showUserCard">用户信息</button>
+      </div>
     </div>
     <!-- 未检测到用户登录，显示登录/注册按钮 -->
-    <div v-else class="right-box-auth">
+    <div v-else class="right-box">
       <div class="group">
-        <button class="to-button-base to-button"
-                :class="{'active-link': this.$route.path === '/login'}"
+        <button class="to-button-base to-auth-button"
+                :class="{'active-link': this.$route.name === 'login'}"
                 @click="toLogin">登录</button>
       </div>
       |
       <div class="group">
-        <button class="to-button-base to-button"
-                :class="{'active-link': this.$route.path === '/register'}"
+        <button class="to-button-base to-auth-button"
+                :class="{'active-link': this.$route.name === 'register'}"
                 @click="toRegister">注册</button>
       </div>
     </div>
     <!-- 渲染当前路由对应的组件内容 -->
     <router-view/>
   </header>
+  <!-- 使用用户卡片 -->
+  <UserCard
+      v-if="user_card_show"
+      @close="user_card_show=false"
+      visible></UserCard>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
+import Modal from "@/components/Modal.vue";
+import UserCard from "@/components/UserCard.vue";
 import Router from '@/components/js/Router.js';
-import { getUserInfoFromCookie } from "@/components/js/Cookie.js";
+import Cookie from "@/components/js/Cookie.js";
 
 export default
 {
   data()
   {
-    return{
-      user_info: null
+    return {
+      /* 用户卡片 */
+      user_card_show: false,
     }
   },
+
+  created()
+  {
+    this.checkUserInfo()
+  },
+
+  components: { UserCard, Modal },
 
   mixins: [ Router ],
 
   computed:
       {
-        isUserInfoExist()
+        ...mapGetters(['getUserInfo']),
+        user_info()
         {
-          return getUserInfoFromCookie() !== null;
+          return this.getUserInfo;
         }
       },
 
-  watch:
+  methods:
       {
-        isUserInfoExist(oldValue, newValue)
+        ...mapActions(['updateUserInfo']),
+        checkUserInfo()
         {
-          if (this.isUserInfoExist)
-            this.user_info = value;
+          /* 获取用户信息 */
+          this.updateUserInfo(Cookie.getUserInfoFromCookie())
+        },
+
+        /* 调用用户卡片 */
+        showUserCard()
+        {
+          /* 如果用户信息存在，允许访问用户卡片 */
+          if (this.user_info !== null)
+            this.user_card_show = true;
         }
       }
 };
@@ -121,11 +156,12 @@ body
   font-weight: bold;
 }
 
-.right-box-auth
+.right-box
 {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 
   margin-right: 1%;    /* 距离右边界距离 */
 
@@ -135,23 +171,58 @@ body
   font-weight: bold;
 }
 
-.to-button
+.container
+{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.blank
+{
+  width: 5px;
+}
+
+.icon
+{
+  background-size: cover;
+  width: 25px;
+  height: 25px;
+}
+
+.button
+{
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.button::after
+{
+  height: 10%;
+}
+
+.button:hover::after
+{
+  transform: scaleX(0.9);    /* 鼠标移至按钮时显示下划线 */
+}
+
+.to-auth-button
 {
   font-size: 15px;
   font-weight: bold;
   position: relative;
 }
 
-.to-button::after
+.to-auth-button::after
 {
   height: 10%;
 }
 
-.to-button:hover::after
+.to-auth-button:hover::after
 {
   transform: scaleX(0.8);    /* 鼠标移至按钮时显示下划线 */
 }
-
 
 .active-link
 {

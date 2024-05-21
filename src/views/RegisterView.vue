@@ -7,33 +7,33 @@
       <h2 class="auth-title">注册</h2>
       <div class="form-group">
         <!-- 用户图标 -->
-        <span class="auth-icon-user auth-icon"></span>
+        <span class="icon-email auth-icon"></span>
         <input class="input-field" type="email" id="email"
                v-model="email" placeholder="请输入邮箱">
       </div>
       <div class="form-group">
         <!-- 密码图标 -->
-        <span class="auth-icon-password auth-icon"></span>
+        <span class="icon-password auth-icon"></span>
         <input class="input-field" type="password" id="password"
                v-model="password" placeholder="请输入密码">
       </div>
       <div class="form-group">
         <!-- 确认密码图标 -->
-        <span class="auth-icon-password auth-icon"></span>
+        <span class="icon-password auth-icon"></span>
         <input class="input-field" type="password" id="passwordAgain"
                v-model="passwordAgain" placeholder="请再次输入密码">
       </div>
       <button type="submit" class="button-base auth-button" @click.prevent="postRegister">注册</button>
-      <button class="to-button-base auth-to-button" @click.prevent="toLogin">已有账号？点此登录</button>
+      <button class="to-button-base auth-to-button" @click="toLogin">已有账号？点此登录</button>
     </form>
-    <!-- 使用 Modal 组件 -->
-    <Modal
-        v-if="modal_show"
-        :type="modal_type"
-        :message="modal_message"
-        @close="modal_show = false"
-     visible/>
   </div>
+  <!-- 使用 Modal 组件 -->
+  <Modal
+      v-if="modal_show"
+      :type="modal_type"
+      :message="modal_message"
+      @close="modal_show = false"
+      visible/>
 </template>
 
 <script>
@@ -42,7 +42,7 @@ import axios from "axios";
 import Modal from '@/components/Modal.vue';
 
 import Router from '@/components/js/Router.js';
-import { URL_POST_register } from "@/components/js/API.js";
+import API from "@/components/js/API.js";
 
 export default
 {
@@ -60,7 +60,7 @@ export default
     }
   },
 
-  mixins: [ Router, Modal ],
+  mixins: [ Router ],
 
   components: { Modal },
 
@@ -123,7 +123,7 @@ export default
           {
             const response = await axios.post
             (
-                URL_POST_register,
+                API.URL_POST_register,
                 data,
                 { headers: { 'Content-Type': 'application/json' } }
             );

@@ -20,18 +20,34 @@
 <script>
 export default
 {
+  mounted()
+  {
+    document.addEventListener('keydown', this.handleKeydown);
+  },
+
+  beforeUnmount()
+  {
+    document.removeEventListener('keydown', this.handleKeydown);
+  },
+
   props:
       {
         visible: { type: Boolean, required: true, default: false },
         message: { type: String, required: true, default: '' },
         type: { type: String, required: true, default: '' }
       },
+
   methods:
       {
         close()
         {
           this.$emit('close');
-          return true;
+        },
+
+        handleKeydown(event)
+        {
+          if (event.key === 'Escape')
+            this.close();
         }
       }
 }
@@ -45,7 +61,7 @@ export default
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--color-mask);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,33 +71,13 @@ export default
 {
   background: var(--color-base);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   width: 300px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--color-shadow);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.icon-normal
-{
-  background: var(--icon-normal);
-}
-
-.icon-success
-{
-  background: var(--icon-success);
-}
-
-.icon-warning
-{
-  background: var(--icon-warning);
-}
-
-.icon-error
-{
-  background: var(--icon-error);
 }
 
 .icon
@@ -90,11 +86,6 @@ export default
   width: 30px;
   height: 30px;
   margin-bottom: 15px;
-}
-
-svg g
-{
-  stroke: var(--color-error)
 }
 
 .modal-message

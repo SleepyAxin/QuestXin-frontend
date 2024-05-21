@@ -3,46 +3,43 @@
     <form class="image-form"></form>
     <!-- 分隔线 -->
     <div class="separator"></div>
-    <form class="auth-form" @submit.prevent="postLogin">
+    <form class="auth-form">
       <h2 class="auth-title">登录</h2>
       <div class="form-group">
         <!-- 用户图标 -->
-        <span class="auth-icon-user auth-icon"></span>
+        <span class="icon-email auth-icon"></span>
         <input class="input-field" type="email" id="email" v-model="email" placeholder="请输入用户名">
       </div>
       <div class="form-group">
         <!-- 密码图标 -->
-        <span class="auth-icon-password auth-icon"></span>
+        <span class="icon-password auth-icon"></span>
         <input class="input-field" type="password" id="password" v-model="password" placeholder="请输入密码">
       </div>
-      <button type="submit" class="button-base">登录</button>
+      <button type="submit" class="button-base" @click.prevent="postLogin">登录</button>
       <button class="to-button-base auth-to-button" @click="toRegister">没有账号？点此注册</button>
     </form>
-    <!-- 使用 Modal 组件 -->
-    <Modal
-        v-if="modal_show"
-        :type="modal_type"
-        :message="modal_message"
-        @close="modal_show = false"
-        visible/>
   </div>
+  <!-- 使用 Modal 组件 -->
+  <Modal
+      v-if="modal_show"
+      :type="modal_type"
+      :message="modal_message"
+      @close="modal_show = false"
+      visible/>
 </template>
 
 <script>
 import axios from 'axios';
 import qs from 'qs';
+import { mapActions } from 'vuex';
 
 import Modal from '@/components/Modal.vue';
 import Router from '@/components/js/Router.js';
-import { URL_POST_login } from '@/components/js/API.js';
-import { saveUserInfoToCookie } from '@/components/js/Cookie.js'
+import API from '@/components/js/API.js';
+import Cookie from '@/components/js/Cookie.js'
 
 export default
 {
-  mixins: [ Router ],
-
-  components: { Modal },
-
   data()
   {
     return {
@@ -56,8 +53,14 @@ export default
     }
   },
 
+  components: { Modal },
+
+  mixins: [ Router ],
+
   methods:
       {
+        ...mapActions(['updateUserInfo']),
+
         /* 调用弹窗 */
         showModal(type, message, show)
         {
@@ -97,7 +100,7 @@ export default
           {
             const response = await axios.post
             (
-                URL_POST_login,
+                API.URL_POST_login,
                 data,
                 { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
             );
@@ -109,14 +112,20 @@ export default
               /* 在用户登录成功后调用saveUserInfoToCookie函数，将用户信息保存到Cookie中 */
               try
               {
-                const user_info =
+                const the_user_info =
                     {
-                      token: response.data["access_token"],
-                      email: this.email
+                      "token": response.data["access_token"],
+                      "email": this.email
                     };
 
-                saveUserInfoToCookie(user_info);
-                console.log('保存Cookie成功：', user_info);
+                await this.updateUserInfo(the_user_info);
+
+                Cookie.saveUserInfoToCookie(the_user_info);
+
+                if (Cookie.getUserInfoFromCookie() !== null)
+                  console.log('保存Cookie成功：', the_user_info);
+                else
+                  console.log('保存Cookie失败：可能浏览器禁用了该网页的Cookie');
               }
               catch (error) { console.log('保存Cookie失败：', error); }
 

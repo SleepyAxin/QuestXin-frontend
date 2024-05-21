@@ -7,8 +7,6 @@
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
-    width: auto; /* 恢复按钮宽度自适应 */
-    margin: auto;
 }
 
 .button-base:hover
@@ -22,6 +20,7 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
+    position: relative;
 }
 
 .to-button-base::after
@@ -43,3 +42,13 @@
 {
     transform: scaleX(1);    /* 鼠标移至按钮时显示下划线 */
 }
+
+/* 图标 */
+.icon-user { background: var(--icon-user) }
+.icon-email { background: var(--icon-email); }
+.icon-password { background: var(--icon-password); }
+
+.icon-normal { background: var(--icon-normal); }
+.icon-success { background: var(--icon-success); }
+.icon-warning { background: var(--icon-warning); }
+.icon-error { background: var(--icon-error); }

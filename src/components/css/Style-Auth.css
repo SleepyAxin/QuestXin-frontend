@@ -1,20 +1,9 @@
-.auth-icon-user
-{
-  background: var(--icon-user);
-}
-
-.auth-icon-password
-{
-  background: var(--icon-password);
-}
-
 .auth-icon
 {
   background-size: cover;
   width: 20px;
   height: 20px;
   margin-right: 10px;
-  color: var(--color-fill);
 }
 
 /* 登录/注册界面卡片 */
@@ -29,7 +18,7 @@
   background-color: var(--color-base);
   transform: translate(-50%, -50%);
   border-radius: var(--border-radius);;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--color-shadow);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,7 +50,7 @@
   padding: 20px;
   background: var(--color-base) var(--image-quset) no-repeat;
   background-size: cover;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 /* 登录/注册标题 */
@@ -73,11 +62,11 @@
 
 .form-group
 {
-  margin-bottom: 15px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
 /* 输入/输出框 */
