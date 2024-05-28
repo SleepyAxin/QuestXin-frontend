@@ -73,6 +73,7 @@ export default
   padding: 20px;
   border-radius: var(--border-radius);
   width: 300px;
+  height: 175px;
   box-shadow: 0 2px 4px var(--color-shadow);
   display: flex;
   flex-direction: column;
@@ -83,8 +84,8 @@ export default
 .icon
 {
   background-size: cover;
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   margin-bottom: 15px;
 }
 

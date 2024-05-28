@@ -6,9 +6,9 @@ export default
         /* 将用户信息转换为字符串 */
         const user_info_string = JSON.stringify(user_info);
 
-        /* 设置Cookie的过期时间为一天 */
+        /* 设置Cookie的过期时间为三天 */
         const expires = new Date();
-        expires.setDate(expires.getDate() + 1);
+        expires.setDate(expires.getDate() + 3);
 
         /* 将用户信息保存到Cookie中 */
         document.cookie = `UserInfo=${encodeURIComponent(user_info_string)};expires=${expires.toUTCString()};path=/`;
@@ -47,6 +47,6 @@ export default
     clearUserInfoInCookie()
     {
         /* 将过期时间设置为过去的时间，即立即过期 */
-        document.cookie = 'userInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'UserInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     }
 }

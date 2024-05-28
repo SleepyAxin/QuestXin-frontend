@@ -47,6 +47,14 @@
 .icon-user { background: var(--icon-user) }
 .icon-email { background: var(--icon-email); }
 .icon-password { background: var(--icon-password); }
+.icon-quest { background: var(--icon-quest); }
+
+.icon-create { background: var(--icon-create); }
+.icon-edit { background: var(--icon-edit); }
+.icon-view { background: var(--icon-view); }
+.icon-pause { background: var(--icon-pause); }
+.icon-delete { background: var(--icon-delete); }
+.icon-share { background: var(--icon-share); }
 
 .icon-normal { background: var(--icon-normal); }
 .icon-success { background: var(--icon-success); }

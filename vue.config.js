@@ -3,7 +3,8 @@ const webpack = require('webpack');
 const devServerConfig = require('./Proxy.Config.js')
 
 module.exports = defineConfig
-({
+(
+    {
   transpileDependencies: true,
   publicPath: '/',
   devServer: devServerConfig,
@@ -19,4 +20,5 @@ module.exports = defineConfig
               })
             ]
       }
-})
+    }
+)

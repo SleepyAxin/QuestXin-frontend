@@ -27,5 +27,15 @@ module.exports =
                         /* 后面组件中调用接口时直接用api代替 */
                         pathRewrite: {'^/api': '/'}
                     },
+                '/questionnaire':    /*  拦截/questionnaire接口 */
+                    {
+                        target: BASE_URL,   /* 调用的接口域名和端口号 */
+                        changeOrigin: true,    /* 这里true表示实现跨域 */
+                        secure: false,    /* 如果是https接口，需要配置这个参数 */
+
+                        /* 用‘/api’代替target里面的地址 */
+                        /* 后面组件中调用接口时直接用api代替 */
+                        pathRewrite: {'^/api': '/'}
+                    },
             }
     }

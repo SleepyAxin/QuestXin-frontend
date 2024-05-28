@@ -15,7 +15,7 @@
         <span class="icon-password auth-icon"></span>
         <input class="input-field" type="password" id="password" v-model="password" placeholder="请输入密码">
       </div>
-      <button type="submit" class="button-base" @click.prevent="postLogin">登录</button>
+      <button type="submit" class="button-base" @click.prevent="login">登录</button>
       <button class="to-button-base auth-to-button" @click="toRegister">没有账号？点此注册</button>
     </form>
   </div>
@@ -33,7 +33,7 @@ import axios from 'axios';
 import qs from 'qs';
 import { mapActions } from 'vuex';
 
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Modal-Info.vue';
 import Router from '@/components/js/Router.js';
 import API from '@/components/js/API.js';
 import Cookie from '@/components/js/Cookie.js'
@@ -83,7 +83,7 @@ export default
         },
 
         /* 请求登录 */
-        async postLogin()
+        async login()
         {
           if (!this.checkAuthInfo())
             return;
@@ -100,7 +100,7 @@ export default
           {
             const response = await axios.post
             (
-                API.URL_POST_login,
+                API.URL_POST_auth_login,
                 data,
                 { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
             );
@@ -150,7 +150,7 @@ export default
               }
               default:
               {
-                this.showModal('error', '登录失败', true);
+                this.showModal('error', '登录失败，请稍后再试', true);
                 break;
               }
             }

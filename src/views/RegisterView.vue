@@ -23,7 +23,7 @@
         <input class="input-field" type="password" id="passwordAgain"
                v-model="passwordAgain" placeholder="请再次输入密码">
       </div>
-      <button type="submit" class="button-base auth-button" @click.prevent="postRegister">注册</button>
+      <button type="submit" class="button-base auth-button" @click.prevent="register">注册</button>
       <button class="to-button-base auth-to-button" @click="toLogin">已有账号？点此登录</button>
     </form>
   </div>
@@ -39,7 +39,7 @@
 <script>
 import axios from "axios";
 
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Modal-Info.vue';
 
 import Router from '@/components/js/Router.js';
 import API from "@/components/js/API.js";
@@ -105,7 +105,7 @@ export default
         },
 
         /* 请求注册 */
-        async postRegister()
+        async register()
         {
           if (!this.checkAuthInfo())
             return;
@@ -123,7 +123,7 @@ export default
           {
             const response = await axios.post
             (
-                API.URL_POST_register,
+                API.URL_POST_auth_register,
                 data,
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -153,7 +153,7 @@ export default
               }
               default:
               {
-                this.showModal('error', '注册失败', true);
+                this.showModal('error', '注册失败，请稍后再试', true);
                 break;
               }
             }

@@ -92,7 +92,7 @@ export default
   height: 300px;
   padding: 20px;
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 10px var(--color-shadow);
+  box-shadow: 0 2px 4px var(--color-shadow);
 }
 
 .info-part
