@@ -6,7 +6,10 @@
     --color-active: #0056b3;    /* 激活背景颜色 */
     --color-mask: #00000080;    /* 遮罩背景颜色 */
     --color-shadow: #0000001A;    /* 阴影背景颜色 */
-    --color-shadow-darken: #00000080;    /* 阴影背景颜色 */
+    --color-shadow-darken: #00000080;    /* 加深阴影背景颜色 */
+
+    --color-delete: #dc3545;    /* 删除颜色 */
+    --color-delete-darken: #b02a37;    /* 删除图标加深颜色 */
 
     --border-radius: 5px;    /* 圆角半径 */
 
@@ -15,21 +18,4 @@
     --image-background-auth: url('@/assets/Background-Auth.svg');    /* 登录/注册盒子背景图片 */
     --image-background-quest: url('@/assets/Background-Quest.svg');    /* 问卷背景图片 */
     --image-logo: url('@/assets/Logo.png');    /* LOGO */
-
-    --icon-user: url('@/assets/icon/User.svg');    /* 用户图标 */
-    --icon-email: url('@/assets/icon/Email.svg');    /* 邮箱图标 */
-    --icon-password: url('@/assets/icon/Password.svg');    /* 密码图标 */
-    --icon-quest: url('@/assets/icon/Quest.svg');    /* 问卷图标 */
-
-    --icon-create: url('@/assets/icon/Create.svg');    /* 创建图标 */
-    --icon-edit: url('@/assets/icon/Edit.svg');    /* 编辑图标 */
-    --icon-view: url('@/assets/icon/View.svg');    /* 查看图标 */
-    --icon-pause: url('@/assets/icon/Pause.svg');    /* 暂停图标 */
-    --icon-delete: url('@/assets/icon/Delete.svg');    /* 删除图标 */
-    --icon-share: url('@/assets/icon/Share.svg');    /* 分享图标 */
-
-    --icon-normal: url('@/assets/icon/Normal.svg');    /* 弹窗 一般图标 */
-    --icon-success: url('@/assets/icon/Success.svg');    /* 弹窗 成功图标 */
-    --icon-warning: url('@/assets/icon/Warning.svg');    /* 弹窗 警告图标 */
-    --icon-error: url('@/assets/icon/Error.svg');    /* 弹窗 错误图标 */
 }

@@ -3,15 +3,17 @@
     <div class="modal" @click.stop>
       <h2>填写问卷信息</h2>
       <div class="form-group">
-        <label for="title">问卷标题</label>
+        <span class="icon-title"></span>
+        <label>问卷标题</label>
         <input class="input-title" type="text" id="title" v-model="title"/>
       </div>
-      <div class="form-group form-description">
-        <label for="description">问卷描述</label>
-        <textarea class="input-description" id="description" v-model="description"></textarea>
+      <div class="form-group form-desc">
+        <span class="icon-desc"></span>
+        <label>问卷描述</label>
+        <textarea class="input-desc" id="desc" v-model="desc"></textarea>
       </div>
-      <div class="form-actions">
-        <button class="button-base submit-button" type="submit" @click.prevent="submitTitleDescription">确定</button>
+      <div>
+        <button class="button-base submit-button" type="submit" @click.prevent="submitTitleDesc">确定</button>
         <button class="button-base cancel-button" @click="close">取消</button>
       </div>
     </div>
@@ -25,178 +27,105 @@
       visible/>
 </template>
 
-<script>
+<script setup>
+import { onBeforeUnmount, onMounted, ref} from "vue";
 import Modal from "@/components/Modal-Info.vue";
 
-export default
+const emit = defineEmits(['submit', 'close']);
+
+const props = defineProps
+({
+  visible: { type: Boolean, required: true, default: false },
+  quest_title: { type: String, required: false, default: '' },
+  quest_desc: { type: String, required: false, default: '' }
+});
+
+let title = ref(props.quest_title);
+let desc = ref(props.quest_desc);
+
+let modal_show = ref(false);
+let modal_type = ref('');
+let modal_message = ref('');
+
+onMounted(() =>
 {
-  components: { Modal },
-  emits: ['submit', 'close'],
+  document.addEventListener('keydown', handleKeydown);
+});
 
-  data()
+onBeforeUnmount(() =>
+{
+  document.removeEventListener('keydown', handleKeydown);
+});
+
+const showModal = (type, message, show) =>
+{
+  modal_type.value = type;
+  modal_message.value = message;
+  modal_show.value = show;
+};
+
+const handleKeydown = (event) =>
+{
+  if (event.key === 'Escape')
+    close();
+};
+
+const close = () =>
+{
+  emit('close');
+};
+
+const submitTitleDesc = () =>
+{
+  if (title.value === '' || desc.value === '')
   {
-    return {
-      title: this.quest_title,
-      description: this.quest_description,
+    console.log("提交失败：问卷标题或描述不可为空");
+    showModal('error', '问卷标题或描述不可为空', true);
+    return;
+  }
 
-      /* 弹出式窗口 */
-      modal_show: false,
-      modal_type: '',
-      modal_message: ''
-    }
-  },
-
-  mounted()
-  {
-    document.addEventListener('keydown', this.handleKeydown);
-  },
-
-  beforeUnmount()
-  {
-    document.removeEventListener('keydown', this.handleKeydown);
-  },
-
-  props:
+  const data =
       {
-        visible: { type: Boolean, required: true, default: false },
-        quest_title: { type: String, required: false, default: '' },
-        quest_description: { type: String, required: false, default: '' }
-      },
+        'title': title.value,
+        'desc': desc.value
+      };
 
-  methods:
-      {
-        close()
-        {
-          this.$emit('close');
-        },
+  emit('submit', data);
 
-        handleKeydown(event)
-        {
-          if (event.key === 'Escape')
-            this.close();
-        },
-
-        /* 调用弹窗 */
-        showModal(type, message, show)
-        {
-          this.modal_type = type;
-          this.modal_message = message;
-          this.modal_show = show;
-        },
-
-        submitTitleDescription()
-        {
-          if (this.title.trim() === '' || this.description.trim() === '')
-          {
-            console.log("提交失败：问卷标题或描述不可为空");
-            this.showModal('error', '问卷标题或描述不可为空', true);
-            return;
-          }
-
-          this.$emit
-          ('submit',
-              {
-                title: this.title,
-                desc: this.description
-              }
-          );
-          this.close();
-        }
-      }
+  close();
 }
 </script>
 
 <style scoped>
-.modal-overlay
-{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-mask);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@import url('@/components/css/Style-Modal.css');
 
 .modal
 {
-  background: var(--color-base);
-  padding: 20px;
-  border-radius: var(--border-radius);
-  width: 500px;
-  height: 300px;
-  box-shadow: 0 2px 4px var(--color-shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 600px;
+  height: 250px;
 }
 
-.form-group
+.form-group span
 {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-  width: 90%;
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
 .form-group label
 {
   margin-right: 10px;
-}
-
-.form-description
-{
-  height: 100%;
+  font-weight: bold;
 }
 
 .input-title
 {
-  width: 80%;
-  padding: 8px;
-  box-sizing: border-box;
-  border: 1px solid var(--color-fill);
-  border-radius: var(--border-radius);
-}
-
-.input-description
-{
   font-size: 16px;
   width: 80%;
-  height: 100%;
   padding: 8px;
   box-sizing: border-box;
   border: 1px solid var(--color-fill);
   border-radius: var(--border-radius);
-  resize: none;    /* 禁止调整大小 */
-}
-
-.form-actions
-{
-  display: flex;
-  justify-content: flex-end;
-}
-
-.submit-button
-{
-  margin-right: 8px;
-  padding: 8px 16px;
-}
-
-.cancel-button
-{
-  margin-left: 8px;
-  padding: 8px 16px;
-  color: black;
-  background-color: transparent;
-  border: 1px solid var(--color-fill);;
-}
-
-.cancel-button:hover
-{
-  background: var(--color-shadow);
 }
 </style>

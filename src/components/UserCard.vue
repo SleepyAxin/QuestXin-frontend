@@ -6,64 +6,111 @@
         <div class="info-group">
           <div class="icon-email icon-info"></div>
           <h2 class="text-type">邮箱：</h2>
-          <h2 class="text-value">{{ user_info.email }}</h2>
+          <h2 class="text-value">{{ user_info['email'] }}</h2>
         </div>
       </div>
       <!-- 分隔线 -->
       <div class="separator"></div>
       <div class="opera-part">
-        <button class="to-button-base button-opera">忘记密码</button>
+        <button class="to-button-base button-opera" @click="forgetPassword">忘记密码</button>
         <button class="to-button-base button-opera">修改密码</button>
         <button class="to-button-base button-opera">注销登录</button>
         <button class="button-base user-card-close" @click="close">关闭</button>
       </div>
     </div>
   </div>
+  <InfoModal
+      v-if="modal_show"
+      :type="modal_type"
+      :message="modal_message"
+      @close="modal_show = false"
+  visible/>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
+<script setup>
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import axios from "axios";
+import InfoModal from "@/components/Modal-Info.vue";
+import API from "@/components/js/API.js";
 
-export default
+const store = useStore();
+const user_info = store.getters.getUserInfo;
+
+let modal_show = ref(false);
+let modal_type = ref('');
+let modal_message = ref('');
+
+const emit = defineEmits(['close']);
+
+defineProps
+({
+  visible: { type: Boolean, required: true, default: false }
+});
+
+onMounted(() =>
 {
-  mounted()
+  document.addEventListener('keydown', handleKeydown);
+});
+
+onBeforeUnmount(() =>
+{
+  document.removeEventListener('keydown', handleKeydown);
+});
+
+const close = () =>
+{
+  emit('close');
+};
+
+const handleKeydown = (event) =>
+{
+  if (event.key === 'Escape')
+    close();
+};
+
+const showInfoModal = (type, message, show) =>
+{
+  modal_type.value = type;
+  modal_message.value = message;
+  modal_show.value = show;
+};
+
+const forgetPassword = async () =>
+{
+  const token = user_info['token'];
+  const data = { 'email': user_info['email'] };
+
+  try
   {
-    document.addEventListener('keydown', this.handleKeydown);
-  },
+    const response = await axios.post
+    (
+        API.POST_auth_forget_password,
+        data,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+    );
 
-  beforeUnmount()
+    if (response.status === 202)
+    {
+      console.log('密码获取成功：', response);
+      showInfoModal('success', '您的密码是：' + response.data, true);
+    }
+  }
+  catch (error)
   {
-    document.removeEventListener('keydown', this.handleKeydown);
-  },
+    console.log('密码获取失败：', error);
 
-  computed:
-      {
-        ...mapGetters(['getUserInfo']),
-        user_info()
-        {
-          return this.getUserInfo;
-        }
-      },
-
-  props:
-      {
-        visible: { type: Boolean, required: true, default: false }
-      },
-
-  methods:
-      {
-        close()
-        {
-          this.$emit('close');
-        },
-
-        handleKeydown(event)
-        {
-          if (event.key === 'Escape')
-            this.close();
-        }
-      }
-}
+    switch (error.response.status)
+    {
+      case 422:
+        showInfoModal('error', '密码获取失败：格式错误', true);
+        break;
+      default:
+        showInfoModal('error', '密码获取失败，请稍后再试', true);
+        break;
+    }
+  }
+};
 </script>
 
 <style scoped>

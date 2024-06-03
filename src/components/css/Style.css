@@ -2,6 +2,7 @@
 .button-base
 {
     padding: 8px 40px; /* 缩小按钮宽度 */
+    width: auto;
     background-color: var(--color-fill);
     color: var(--color-base);
     border: none;
@@ -29,11 +30,8 @@
     position: absolute;
     left: 0;
     bottom: -2px;    /* 控制下划线的位置 */
-
     width: 100%;
-
     background-color: var(--color-fill);    /* 设置下划线颜色 */
-
     transition: transform 0.3s ease-in-out;    /* 添加过渡效果 */
     transform: scaleX(0);    /* 初始状态下划线不可见 */
 }
@@ -44,19 +42,33 @@
 }
 
 /* 图标 */
-.icon-user { background: var(--icon-user) }
-.icon-email { background: var(--icon-email); }
-.icon-password { background: var(--icon-password); }
-.icon-quest { background: var(--icon-quest); }
+.icon-user     { background: url('@/assets/icon/User.svg'); }        /* 用户图标 */
+.icon-email    { background: url('@/assets/icon/Email.svg'); }       /* 邮箱图标 */
+.icon-password { background: url('@/assets/icon/Password.svg'); }    /* 密码图标 */
+.icon-quest    { background: url('@/assets/icon/Quest.svg'); }       /* 问题图标 */
 
-.icon-create { background: var(--icon-create); }
-.icon-edit { background: var(--icon-edit); }
-.icon-view { background: var(--icon-view); }
-.icon-pause { background: var(--icon-pause); }
-.icon-delete { background: var(--icon-delete); }
-.icon-share { background: var(--icon-share); }
+.icon-create { background: url('@/assets/icon/Create.svg'); }    /* 创建图标 */
+.icon-edit   { background: url('@/assets/icon/Edit.svg'); }      /* 编辑图标 */
+.icon-view   { background: url('@/assets/icon/View.svg'); }      /* 预览图标 */
+.icon-pause  { background: url('@/assets/icon/Pause.svg'); }     /* 暂停图标 */
+.icon-delete { background: url('@/assets/icon/Delete.svg'); }    /* 删除图标 */
+.icon-share  { background: url('@/assets/icon/Share.svg'); }     /* 分享图标 */
+.icon-add    { background: url('@/assets/icon/Add.svg'); }       /* 增加图标 */
+.icon-title  { background: url('@/assets/icon/Title.svg'); }     /* 标题图标 */
+.icon-desc   { background: url('@/assets/icon/Desc.svg'); }      /* 描述图标 */
+.icon-type   { background: url('@/assets/icon/Type.svg'); }      /* 类型图标 */
+.icon-option { background: url('@/assets/icon/Option.svg'); }    /* 选项图标 */
 
-.icon-normal { background: var(--icon-normal); }
-.icon-success { background: var(--icon-success); }
-.icon-warning { background: var(--icon-warning); }
-.icon-error { background: var(--icon-error); }
+.icon-required { background: url('@/assets/icon/Required.svg'); }    /* 是否必需图标 */
+
+.icon-arrow-right { background: url('@/assets/icon/ArrowRight.svg'); }    /* 向右箭头图标 */
+.icon-arrow-down  { background: url('@/assets/icon/ArrowDown.svg'); }     /* 向下箭头图标 */
+
+.icon-single-choice { background: url('@/assets/icon/SingleChoice.svg'); }    /* 单选题图标 */
+.icon-multi-choice  { background: url('@/assets/icon/MultiChoice.svg'); }     /* 多选题图标 */
+.icon-fill-blank    { background: url('@/assets/icon/FillBlank.svg');  }      /* 填空题图标 */
+
+.icon-normal  { background: url('@/assets/icon/Normal.svg'); }     /* 弹窗 一般图标 */
+.icon-success { background: url('@/assets/icon/Success.svg'); }    /* 弹窗 成功图标 */
+.icon-warning { background: url('@/assets/icon/Warning.svg'); }    /* 弹窗 警告图标 */
+.icon-error   { background: url('@/assets/icon/Error.svg'); }      /* 弹窗 错误图标 */

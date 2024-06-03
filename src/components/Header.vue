@@ -1,14 +1,14 @@
 <template>
   <header>
     <div class="left-box">
-      <div class="img-logo" @click="toHome"></div>
-      <button class="web-title" @click="toHome">问卷鑫</button>
+      <div class="img-logo" @click="Router.toHome"></div>
+      <button class="web-title" @click="Router.toHome">问卷鑫</button>
     </div>
     <!-- 检测到用户登录，显示用户操作按钮 -->
     <div v-if="user_info !== null" class="right-box">
-      <div v-if="this.$route.name !== 'quest'" class="container">
+      <div v-if="$route.name !== 'quest'" class="container">
         <span class="icon-quest icon"></span>
-        <button class="to-button-base button" @click="toQuest">问卷管理</button>
+        <button class="to-button-base button" @click="Router.toQuest">问卷管理</button>
       </div>
       <div class="blank"></div>
       <div class="container">
@@ -20,14 +20,14 @@
     <div v-else class="right-box">
       <div class="group">
         <button class="to-button-base to-auth-button"
-                :class="{'active-link': this.$route.name === 'login'}"
-                @click="toLogin">登录</button>
+                :class="{'active-link': $route.name === 'login'}"
+                @click="Router.toLogin">登录</button>
       </div>
       |
       <div class="group">
         <button class="to-button-base to-auth-button"
-                :class="{'active-link': this.$route.name === 'register'}"
-                @click="toRegister">注册</button>
+                :class="{'active-link': $route.name === 'register'}"
+                @click="Router.toRegister">注册</button>
       </div>
     </div>
     <!-- 渲染当前路由对应的组件内容 -->
@@ -35,45 +35,26 @@
   </header>
 </template>
 
-<script>
-import { mapGetters, mapActions } from 'vuex';
-
+<script setup>
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import Router from '@/components/js/Router.js';
 import Cookie from "@/components/js/Cookie.js";
 
-export default
+const emit = defineEmits(['showUserCard']);
+
+const store = useStore();
+let user_info = computed(() => store.getters.getUserInfo);
+
+onMounted(() =>
 {
-  created()
-  {
-    this.checkUserInfo()
-  },
+  store.dispatch('updateUserInfo', Cookie.getUserInfoFromCookie());
+});
 
-  mixins: [ Router ],
-
-  computed:
-      {
-        ...mapGetters(['getUserInfo']),
-        user_info()
-        {
-          return this.getUserInfo;
-        }
-      },
-
-  methods:
-      {
-        ...mapActions(['updateUserInfo']),
-        checkUserInfo()
-        {
-          /* 获取用户信息 */
-          this.updateUserInfo(Cookie.getUserInfoFromCookie());
-        },
-
-        clickShowUserCard()
-        {
-          this.$emit('showUserCard');
-        }
-      }
-}
+const clickShowUserCard = () =>
+{
+  emit('showUserCard');
+};
 </script>
 
 <style scoped>

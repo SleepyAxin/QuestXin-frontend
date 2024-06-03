@@ -8,32 +8,16 @@
       visible></UserCard>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
 import Header from "@/components/Header.vue";
 import UserCard from "@/components/UserCard.vue";
 
-export default
+let user_card_show = ref(false);
+
+const showUserCard = () =>
 {
-  data()
-  {
-    return {
-      user_card_show: false,    /* 用户卡片 */
-      header_hidden: false,    /* 头部 */
-    }
-  },
-
-  components: { Header, UserCard },
-
-  methods:
-      {
-        /* 调用用户卡片 */
-        showUserCard()
-        {
-          /* 如果用户信息存在，允许访问用户卡片 */
-          if (this.user_info !== null)
-            this.user_card_show = true;
-        }
-      }
+  user_card_show.value = true;
 };
 </script>
 

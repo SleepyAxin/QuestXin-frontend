@@ -4,79 +4,58 @@
       <span class="icon-warning icon"></span>
       <p class="modal-message">确定要删除当前问卷吗？</p>
       <div class="form-actions">
-        <button class="button-base ensure-button" @click="clickDeleteQuest">确定</button>
+        <button class="button-base ensure-button" type="submit" @click.prevent="submitDeleteQuest">确定</button>
         <button class="button-base cancel-button" @click="close">取消</button>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default
+<script setup>
+import { onBeforeUnmount, onMounted } from "vue";
+
+defineProps
+({
+  visible: { type: Boolean, required: true, default: false }
+});
+
+const emit = defineEmits(['submit', 'close']);
+
+onMounted(() =>
 {
-  mounted()
-  {
-    document.addEventListener('keydown', this.handleKeydown);
-  },
+  document.addEventListener('keydown', handleKeydown);
+});
 
-  beforeUnmount()
-  {
-    document.removeEventListener('keydown', this.handleKeydown);
-  },
+onBeforeUnmount(() =>
+{
+  document.removeEventListener('keydown', handleKeydown);
+});
 
-  props:
-      {
-        visible: {type: Boolean, required: true, default: false},
-      },
+const handleKeydown = (event) =>
+{
+  if (event.key === 'Escape')
+    close();
+};
 
-  methods:
-      {
-        clickDeleteQuest()
-        {
-          this.$emit('deleteQuest');
-          this.close();
-        },
+const close = () =>
+{
+  emit('close');
+};
 
-        close()
-        {
-          this.$emit('close');
-        },
-
-        handleKeydown(event)
-        {
-          if (event.key === 'Escape')
-            this.close();
-        }
-      }
-}
+const submitDeleteQuest  = () =>
+{
+  emit('submit', true);
+  close();
+};
 </script>
 
 <style scoped>
-.modal-overlay
-{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-mask);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@import url('@/components/css/Style-Modal.css');
 
 .modal
 {
-  background: var(--color-base);
-  padding: 20px;
-  border-radius: var(--border-radius);
   width: 300px;
   height: 175px;
-  box-shadow: 0 2px 4px var(--color-shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .icon

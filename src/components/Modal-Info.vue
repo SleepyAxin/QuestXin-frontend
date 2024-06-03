@@ -12,60 +12,51 @@
       <!-- 其它（普通） -->
       <span v-else class="icon-normal icon"></span>
       <p class="modal-message">{{ message }}</p>
-      <button class="button-base modal-close" @click="close">确定</button>
+      <button class="button-base modal-close" type="submit" @click="submitEnsure">确定</button>
     </div>
   </div>
 </template>
 
-<script>
-export default
+
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue';
+
+defineProps
+({
+  visible: { type: Boolean, required: true, default: false },
+  message: { type: String, required: true, default: '' },
+  type: { type: String, required: true, default: '' }
+});
+
+const emit = defineEmits(['submit', 'close']);
+
+onMounted(() =>
 {
-  mounted()
-  {
-    document.addEventListener('keydown', this.handleKeydown);
-  },
+  document.addEventListener('keydown', handleKeydown);
+});
 
-  beforeUnmount()
-  {
-    document.removeEventListener('keydown', this.handleKeydown);
-  },
+onBeforeUnmount(() =>
+{
+  document.removeEventListener('keydown', handleKeydown);
+});
 
-  props:
-      {
-        visible: { type: Boolean, required: true, default: false },
-        message: { type: String, required: true, default: '' },
-        type: { type: String, required: true, default: '' }
-      },
+const close = () => { emit('close'); };
 
-  methods:
-      {
-        close()
-        {
-          this.$emit('close');
-        },
+const handleKeydown = (event) =>
+{
+  if (event.key === 'Escape')
+    close();
+};
 
-        handleKeydown(event)
-        {
-          if (event.key === 'Escape')
-            this.close();
-        }
-      }
-}
+const submitEnsure = () =>
+{
+  emit('submit', true);
+  close();
+};
 </script>
 
 <style scoped>
-.modal-overlay
-{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-mask);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@import url('@/components/css/Style-Modal.css');
 
 .modal
 {
