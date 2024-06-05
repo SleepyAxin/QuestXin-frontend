@@ -1,0 +1,171 @@
+/* 问卷内容 */
+.quest-content
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-style: none;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--color-shadow-darken);
+    width: 96%;
+    height: 100%;
+    margin-bottom: 15px;
+    overflow: auto;
+}
+
+/* 问卷标题 */
+.quest-title
+{
+    text-align: center;
+    word-break: break-all;    /* 允许在任何字符点换行 */
+    margin-top: 10px;
+    width: 96%;
+}
+
+/* 问卷描述 */
+.quest-desc
+{
+    width: 96%;
+    word-break: break-all;    /* 允许在任何字符点换行 */
+    text-align: left;    /* 确保文本左对齐 */
+    margin-bottom: 2px;
+}
+
+/* 问卷描述的下划线 */
+.quest-underline
+{
+    width: 97%;
+    padding: 1px;
+    margin-bottom: 25px;
+    background-color: var(--color-fill);    /* 设置下划线颜色 */
+}
+
+/* 每个问题 */
+.question-part
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* 每个问题的卡片 */
+.question-card
+{
+    display: flex;
+    flex-direction: column;
+    border-style: none;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--color-shadow);
+    position: relative;
+    width: 70%;
+    height: auto;
+    margin-bottom: 5px;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+/* 问题序号和描述区域 */
+.question-info
+{
+    display: flex;
+    margin-bottom: 5px;
+}
+
+/* 问题描述 */
+.question-desc
+{
+    max-width: 105vh;
+    overflow: hidden;    /* 隐藏超出范围的文本 */
+    word-wrap: break-word;    /* 自动换行 */
+    word-break: break-all;    /* 允许在任何字符点换行 */
+}
+
+/* 问题序号 */
+.question-index
+{
+    font-weight: bold;
+    margin-right: 9px;
+}
+
+/* 选项区域 */
+.question-options
+{
+    display: flex;
+    flex-direction: column;
+}
+
+/* 每个选项群组 */
+.option-group
+{
+    max-width: 110vh;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 5px;
+    cursor: pointer;
+    overflow: hidden;    /* 隐藏超出范围的文本 */
+    word-wrap: break-word;    /* 自动换行 */
+    word-break: break-all;    /* 允许在任何字符点换行 */
+}
+
+/* 选择题图标 */
+.icon-single-choice-unchecked.choice-icon,
+.icon-single-choice-checked.choice-icon,
+.icon-multi-choice-unchecked.choice-icon,
+.icon-multi-choice-checked.choice-icon
+{
+    /* 清除默认样式 */
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    /* 自定义样式 */
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin: 2px 6px 0 0;
+    background-color: transparent;
+    background-size: cover;
+    background-position: center;
+}
+
+/* 填空题框 */
+.fill-blank-area
+{
+    position: relative;
+    height: 60px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    resize: vertical;
+    font-size: 18px;
+    box-sizing: border-box;
+    border: 1px solid var(--color-fill);
+    border-radius: var(--border-radius);
+}
+
+/* 每个问题的操作区域 */
+.opera-part
+{
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+/* 每个问题的操作按钮 */
+.button-base.edit-question-button
+{
+    padding: 5px 8px;
+    margin-bottom: 5px;
+}
+
+.button-base.delete-question-button
+{
+    padding: 5px 8px;
+    background-color: var(--color-delete);
+}
+
+.button-base.delete-question-button:hover
+{
+    background-color: var(--color-delete-darken);
+}

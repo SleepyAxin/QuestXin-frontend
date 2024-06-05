@@ -1,19 +1,19 @@
-# questxin
+# QuestXin问卷管理系统
 
-## Project setup
+### 运行以下命令来安装项目的所有依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 运行以下命令来运行项目（支持热加载）
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 运行以下命令来打包项目
 ```
 npm run build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 定制配置
+参照 [Configuration Reference](https://cli.vuejs.org/config/).

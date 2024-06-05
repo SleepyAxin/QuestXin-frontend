@@ -14,7 +14,7 @@
       </div>
       <div>
         <button class="button-base submit-button" type="submit" @click.prevent="submitTitleDesc">确定</button>
-        <button class="button-base cancel-button" @click="close">取消</button>
+        <button class="button-base cancel-button" @click.prevent="close">取消</button>
       </div>
     </div>
   </div>
@@ -84,13 +84,13 @@ const submitTitleDesc = () =>
     return;
   }
 
-  const data =
+  const quest =
       {
         'title': title.value,
         'desc': desc.value
       };
 
-  emit('submit', data);
+  emit('submit', quest);
 
   close();
 }
@@ -110,7 +110,7 @@ const submitTitleDesc = () =>
   background-size: cover;
   width: 20px;
   height: 20px;
-  margin-right: 8px;
+  margin: 0 8px 0 0;
 }
 
 .form-group label

@@ -2,7 +2,7 @@
   <div v-if="visible" class="modal-overlay">
     <div class="modal" @click.stop>
       <span class="icon-warning icon"></span>
-      <p class="modal-message">确定要删除当前问卷吗？</p>
+      <p class="modal-message">{{ message }}</p>
       <div class="form-actions">
         <button class="button-base ensure-button" type="submit" @click.prevent="submitDeleteQuest">确定</button>
         <button class="button-base cancel-button" @click="close">取消</button>
@@ -16,7 +16,8 @@ import { onBeforeUnmount, onMounted } from "vue";
 
 defineProps
 ({
-  visible: { type: Boolean, required: true, default: false }
+  visible: { type: Boolean, required: true, default: false },
+  message: { type: String, required: true, default: '' }
 });
 
 const emit = defineEmits(['submit', 'close']);
@@ -44,7 +45,7 @@ const close = () =>
 
 const submitDeleteQuest  = () =>
 {
-  emit('submit', true);
+  emit('submit');
   close();
 };
 </script>
@@ -63,7 +64,7 @@ const submitDeleteQuest  = () =>
   background-size: cover;
   width: 50px;
   height: 50px;
-  margin-bottom: 15px;
+  margin: 0 0 15px;
 }
 
 .modal-message
@@ -78,13 +79,19 @@ const submitDeleteQuest  = () =>
   justify-content: flex-end;
 }
 
-.ensure-button
+.button-base.ensure-button
 {
   margin-right: 8px;
   padding: 8px 16px;
+  background-color: var(--color-delete);
 }
 
-.cancel-button
+.button-base.ensure-button:hover
+{
+  background-color: var(--color-delete-darken);
+}
+
+.button-base.cancel-button
 {
   margin-left: 8px;
   padding: 8px 16px;
@@ -93,7 +100,7 @@ const submitDeleteQuest  = () =>
   border: 1px solid var(--color-fill);;
 }
 
-.cancel-button:hover
+.button-base.cancel-button:hover
 {
   background: var(--color-shadow);
 }

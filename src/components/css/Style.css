@@ -64,9 +64,10 @@
 .icon-arrow-right { background: url('@/assets/icon/ArrowRight.svg'); }    /* 向右箭头图标 */
 .icon-arrow-down  { background: url('@/assets/icon/ArrowDown.svg'); }     /* 向下箭头图标 */
 
-.icon-single-choice { background: url('@/assets/icon/SingleChoice.svg'); }    /* 单选题图标 */
-.icon-multi-choice  { background: url('@/assets/icon/MultiChoice.svg'); }     /* 多选题图标 */
-.icon-fill-blank    { background: url('@/assets/icon/FillBlank.svg');  }      /* 填空题图标 */
+.icon-single-choice-checked   { background: url('@/assets/icon/SingleChoiceChecked.svg');}
+.icon-single-choice-unchecked { background: url('@/assets/icon/SingleChoiceUnchecked.svg');}
+.icon-multi-choice-checked    { background: url('@/assets/icon/MultiChoiceChecked.svg');}
+.icon-multi-choice-unchecked  { background: url('@/assets/icon/MultiChoiceUnchecked.svg');}
 
 .icon-normal  { background: url('@/assets/icon/Normal.svg'); }     /* 弹窗 一般图标 */
 .icon-success { background: url('@/assets/icon/Success.svg'); }    /* 弹窗 成功图标 */

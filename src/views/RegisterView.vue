@@ -131,13 +131,10 @@ const register = async () =>
   }
 };
 
-const handleEnsure = (data) =>
+const handleEnsure = () =>
 {
-  if (data === true)
-  {
-    console.log('注册成功，即将跳转到登录');
-    Router.toLogin();
-  }
+  console.log('注册成功，即将跳转到登录');
+  Router.toLogin();
 };
 </script>
 

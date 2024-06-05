@@ -50,7 +50,7 @@ const handleKeydown = (event) =>
 
 const submitEnsure = () =>
 {
-  emit('submit', true);
+  emit('submit');
   close();
 };
 </script>
@@ -77,7 +77,7 @@ const submitEnsure = () =>
   background-size: cover;
   width: 50px;
   height: 50px;
-  margin-bottom: 15px;
+  margin: 0 0 15px;
 }
 
 .modal-message

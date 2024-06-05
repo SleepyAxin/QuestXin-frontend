@@ -91,21 +91,18 @@ header
 {
   background: var(--image-logo) no-repeat;
   background-size: cover;
-
   width: 30px;
   height: 30px;
-
   cursor: pointer;
+  margin: 0;
 }
 
 .web-title
 {
   background-color: transparent;
   border: none;
-
   font-size: 22px;
   font-weight: bold;
-
   cursor: pointer;
 }
 
@@ -115,11 +112,8 @@ header
   flex-direction: row;
   align-items: center;
   justify-content: center;
-
   margin-right: 1%;    /* 距离右边界距离 */
-
   border-radius: var(--border-radius);
-
   font-size: 20px;
   font-weight: bold;
 }
@@ -143,6 +137,7 @@ header
   background-position: center;
   width: 28px;
   height: 28px;
+  margin: 0;
 }
 
 .button

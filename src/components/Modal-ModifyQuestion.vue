@@ -5,41 +5,69 @@
       <div class="form-group form-desc">
         <span class="icon-desc"></span>
         <label for="question_desc">问题描述</label>
-        <textarea class="input-desc" id="question_desc" v-model="desc"></textarea>
+        <textarea class="input-desc" v-model="title"></textarea>
       </div>
       <div class="form-group">
         <span class="icon-type"></span>
         <label>问题类型</label>
-        <select class="icon-arrow-down question_type" @click="type = $event.target.value" v-model="type">
-          <option value="single_choice">单选题</option>
-          <option value="multi_choice">多选题</option>
-          <option value="fill_blank">填空题</option>
-        </select>
+        <label class="radio">
+          <input v-if="type === 1" class="icon-single-choice-checked radio-input"
+                 type="radio" :value=1 v-model="type"/>
+          <input v-else class="icon-single-choice-unchecked radio-input"
+                 type="radio" :value=1 v-model="type"/>
+          单选题
+        </label>
+        <label class="radio">
+          <input v-if="type === 2" class="icon-single-choice-checked radio-input"
+                 type="radio" :value=2 v-model="type"/>
+          <input v-else class="icon-single-choice-unchecked radio-input"
+                 type="radio" :value=2 v-model="type"/>
+          多选题
+        </label>
+        <label class="radio">
+          <input v-if="type === 3" class="icon-single-choice-checked radio-input"
+                 type="radio" :value=3 v-model="type"/>
+          <input v-else class="icon-single-choice-unchecked radio-input"
+                 type="radio" :value=3 v-model="type"/>
+          填空题
+        </label>
       </div>
       <div class="form-group">
         <span class="icon-required"></span>
         <label>是否必填</label>
-        <label class="radio"><input type="radio" value=true v-model="required"/>是</label>
-        <label class="radio"><input type="radio" value=false v-model="required"/>否</label>
+        <label class="radio">
+          <input v-if="required === true" class="icon-single-choice-checked radio-input"
+                 type="radio" :value=true v-model="required"/>
+          <input v-else class="icon-single-choice-unchecked radio-input"
+                 type="radio" :value=true v-model="required"/>
+          是
+        </label>
+        <label class="radio">
+          <input v-if="required === false" class="icon-single-choice-checked radio-input"
+                 type="radio" :value=false v-model="required"/>
+          <input v-else class="icon-single-choice-unchecked radio-input"
+                 type="radio" :value=false v-model="required"/>
+          否
+        </label>
       </div>
-      <div v-if="type === 'single_choice' || type === 'multi_choice'" class="form-group form-options">
+      <div v-if="type === 1 || type === 2" class="form-group form-options">
         <div class="form-group form-options-title">
           <span class="icon-option"></span>
           <label>编辑选项</label>
           <div><button class="button-base" @click="addOption">添加选项</button></div>
         </div>
         <div class="options-list">
-          <div class="form-group option-part" v-for="(options, index) in options" :key="index">
+          <div class="form-group option-part" v-for="index in options.length" :key="index">
             <span class="icon-arrow-right"></span>
-            <label>选项{{index+1}}</label>
-            <input type="text" v-model="options[index]" placeholder="请输入选项内容"/>
-            <button @click="removeOption(index)">删除</button>
+            <label>选项{{index}}</label>
+            <input type="text" v-model="options[index-1]['title']" placeholder="请输入选项内容"/>
+            <button @click="removeOption(index-1)">删除</button>
           </div>
         </div>
       </div>
       <div>
         <button class="button-base submit-button" type="submit" @click.prevent="submitQuestion">确定</button>
-        <button class="button-base cancel-button" @click="close">取消</button>
+        <button class="button-base cancel-button" @click.prevent="close">取消</button>
       </div>
     </div>
   </div>
@@ -59,10 +87,10 @@ import InfoModal from "@/components/Modal-Info.vue";
 const props = defineProps
 ({
   visible: { type: Boolean, required: true, default: false },
-  quest_desc: { type: String, required: false, default: '' },
-  quest_type: { type: String, required: false, default: '' },
-  quest_required: { type: Boolean, required: false, default: null },
-  quest_options: { type: Array, required: false, default: [] }
+  question_title: { type: String, required: false, default: '' },
+  question_type: { type: Number, required: false, default: 0 },
+  question_required: { type: Boolean, required: false, default: null },
+  question_options: { type: Array, required: false, default: [] }
 });
 
 const emit = defineEmits(['submit', 'close']);
@@ -71,10 +99,10 @@ let modal_show = ref(false);
 let modal_type = ref('');
 let modal_message = ref('');
 
-let desc = ref(props.quest_desc);
-let type = ref(props.quest_type);
-let required = ref(props.quest_required);
-let options = ref(props.quest_options);
+let title = ref(props.question_title);
+let type = ref(props.question_type);
+let required = ref(props.question_required);
+let options = ref(props.question_options);
 
 onMounted(() =>
 {
@@ -116,13 +144,13 @@ const removeOption = (index) =>
 
 const submitQuestion = () =>
 {
-  if (desc.value === '')
+  if (title.value === '')
   {
     showModal('error', '问题描述不可为空', true);
     return;
   }
 
-  if (type.value === '')
+  if (type.value === 0)
   {
     showModal('error', '请选择问题类型', true);
     return;
@@ -134,7 +162,7 @@ const submitQuestion = () =>
     return;
   }
 
-  if (type.value === 'single_choice' || type.value === 'multi_choice')
+  if (type.value === 1 || type.value === 2)
   {
     if (options.value.length === 0)
     {
@@ -152,15 +180,15 @@ const submitQuestion = () =>
     }
   }
 
-  const data =
+  const question =
       {
-        'desc': desc.value,
+        'title': title.value,
         'type': type.value,
         'required': required.value,
         'options': options.value
       };
 
-  emit('submit', data);
+  emit('submit', question);
 
   close();
 };
@@ -194,27 +222,35 @@ const submitQuestion = () =>
   font-weight: bold;
 }
 
-.icon-arrow-down.question_type
-{
-  width: 125px;
-  height: 30px;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--color-fill);
-  font-size: 16px;
-  /* 清除默认样式 */
-  appearance:none;
-  -moz-appearance:none;
-  -webkit-appearance:none;
-  /* 下拉箭头图片 */
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 16px;
-}
-
 .question_type option
 {
   font-size: 16px;
   text-align: center;
+}
+
+.radio
+{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: safe center;
+  cursor: pointer;
+}
+
+.icon-single-choice-unchecked.radio-input,
+.icon-single-choice-checked.radio-input
+{
+  /* 清除默认样式 */
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  /* 自定义样式 */
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  margin: 0 0 0 0;
+  background-size: cover;
+  background-position: center;
 }
 
 .form-options

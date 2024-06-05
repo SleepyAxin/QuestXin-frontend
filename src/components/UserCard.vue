@@ -12,9 +12,9 @@
       <!-- 分隔线 -->
       <div class="separator"></div>
       <div class="opera-part">
-        <button class="to-button-base button-opera" @click="forgetPassword">忘记密码</button>
         <button class="to-button-base button-opera">修改密码</button>
-        <button class="to-button-base button-opera">注销登录</button>
+        <button class="to-button-base button-opera">登出</button>
+        <button class="to-button-base button-opera">删除账号</button>
         <button class="button-base user-card-close" @click="close">关闭</button>
       </div>
     </div>
@@ -160,7 +160,7 @@ const forgetPassword = async () =>
   background-size: cover;
   width: 80px;
   height: 80px;
-  margin-bottom: 15px;
+  margin: 0 0 15px;
 }
 
 .info-group
@@ -176,7 +176,7 @@ const forgetPassword = async () =>
   background-size: cover;
   width: 25px;
   height: 25px;
-  margin-right: 10px;
+  margin: 0 10px 0 0;
 }
 
 .text-type

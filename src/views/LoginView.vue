@@ -138,13 +138,10 @@ const login = async () =>
   }
 };
 
-const handleEnsure = (data) =>
+const handleEnsure = () =>
 {
-  if (data === true)
-  {
-    console.log('登录成功，即将跳转到首页');
-    Router.toHome();
-  }
+  console.log('登录成功，即将跳转到首页');
+  Router.toHome();
 };
 </script>
 
