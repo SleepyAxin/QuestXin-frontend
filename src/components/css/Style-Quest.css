@@ -56,8 +56,9 @@
     border-style: none;
     border-radius: var(--border-radius);
     box-shadow: 0 2px 4px var(--color-shadow);
+    background-color: var(--color-base);
     position: relative;
-    width: 70%;
+    width: 55%;
     height: auto;
     margin-bottom: 5px;
     padding: 10px 20px;
@@ -85,6 +86,12 @@
 {
     font-weight: bold;
     margin-right: 9px;
+}
+
+.question-required
+{
+    font-weight: bold;
+    color: var(--color-delete);
 }
 
 /* 选项区域 */

@@ -189,7 +189,6 @@ const submitQuestion = () =>
       };
 
   emit('submit', question);
-
   close();
 };
 </script>

@@ -6,24 +6,29 @@
     <form class="auth-form">
       <h2 class="auth-title">注册</h2>
       <div class="form-group">
-        <!-- 用户图标 -->
         <span class="icon-email auth-icon"></span>
-        <input class="input-field" type="email" id="email"
+        <input class="input-field" type="email" autocomplete="new-email"
                v-model="email" placeholder="请输入邮箱">
       </div>
       <div class="form-group">
-        <!-- 密码图标 -->
         <span class="icon-password auth-icon"></span>
-        <input class="input-field" type="password" id="password"
+        <input class="input-field" type="password" autocomplete="new-password"
                v-model="password" placeholder="请输入密码">
       </div>
       <div class="form-group">
-        <!-- 确认密码图标 -->
         <span class="icon-password auth-icon"></span>
-        <input class="input-field" type="password" id="passwordAgain"
+        <input class="input-field" type="password" autocomplete="new-password"
                v-model="passwordAgain" placeholder="请再次输入密码">
       </div>
-      <button type="submit" class="button-base auth-button" @click.prevent="register">注册</button>
+      <div class="form-group">
+        <span class="icon-verification-code auth-icon"></span>
+        <input class="input-field input-code" type="text"
+               v-model="code" placeholder="请输入验证码">
+        <button class="button-base get-code" :disabled="button_disabled"
+                :class="{ 'disabled-button': button_disabled }"
+                @click.prevent="getCode">{{ button_text }}</button>
+      </div>
+      <button class="button-base auth-button" @click.prevent="register">注册</button>
       <button class="to-button-base auth-to-button" @click="Router.toLogin">已有账号？点此登录</button>
     </form>
   </div>
@@ -48,15 +53,75 @@ import Router from '@/components/js/Router.js';
 let email = ref('');
 let password = ref('');
 let passwordAgain = ref('');
+let code = ref('');
+
+let button_text = ref('获取');
+let button_disabled = ref(false);
+let count_down = ref(15);
+let timer = ref(-1);
+
 let modal_show = ref(false);
 let modal_type = ref('');
 let modal_message = ref('');
+
+let register_success = ref(false);
 
 const showModal = (type, message, show) =>
 {
   modal_type.value = type;
   modal_message.value = message;
   modal_show.value = show;
+};
+
+const countDown = () =>
+{
+  button_disabled.value = true;
+  button_text.value = `${count_down.value}`;
+
+  timer.value = setInterval
+  (() => {
+    count_down.value--;
+    if (count_down.value > 0)
+      button_text.value = `${count_down.value}`;
+    else
+    {
+      clearInterval(timer.value);
+      button_disabled.value = false;
+      button_text.value = '获取';
+      count_down.value = 15;
+    }
+  }, 1000);
+};
+
+const getCode = async () =>
+{
+  if (button_disabled.value)
+    return;
+  if (!checkAuthInfo())
+    return;
+  countDown();    /* 开始计时 */
+  console.log('正在获取验证码...');
+  const data = { 'email': email.value };
+  try
+  {
+    const response = await axios.post
+    (
+        API.POST_default_send_verification_code,
+        data,
+        { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.status === 200)
+    {
+      console.log('验证码发送成功', response.data);
+      showModal('success', '验证码发送成功，请注意查收', true);
+    }
+  }
+  catch (error)
+  {
+    console.error('验证码发送失败：', error.response ? error.response.data : error.message);
+    showModal('error', '验证码发送失败，请稍后再试', true);
+  }
 };
 
 const checkAuthInfo = () =>
@@ -86,7 +151,14 @@ const checkAuthInfo = () =>
 
 const register = async () =>
 {
-  if (!checkAuthInfo()) return;
+  if (!checkAuthInfo())
+    return;
+
+  if (code.value === '')
+  {
+    showModal('error', '未输入验证码', true);
+    return;
+  }
 
   const data =
       {
@@ -95,6 +167,7 @@ const register = async () =>
         'is_active': true,
         'is_superuser': false,
         'is_verified': false,
+        'verification_code': code.value
       };
 
   try
@@ -108,6 +181,7 @@ const register = async () =>
 
     if (response.status === 201)
     {
+      register_success.value = true;
       console.log('用户注册成功：', response.data);
       showModal('success', '注册成功，点击前往登录', true);
     }
@@ -133,8 +207,11 @@ const register = async () =>
 
 const handleEnsure = () =>
 {
-  console.log('注册成功，即将跳转到登录');
-  Router.toLogin();
+  if (register_success.value)
+  {
+    console.log('注册成功，即将跳转到登录');
+    Router.toLogin();
+  }
 };
 </script>
 

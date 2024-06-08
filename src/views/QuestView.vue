@@ -5,23 +5,33 @@
         <span class="icon-create icon-button"></span>
         创建问卷
       </button>
-      <div class="quest-list">
+      <div v-if="quest_list.length !== 0" class="quest-list">
         <button v-for="(quest, index) in [...quest_list].reverse()" :key="index"
                 class="quest-item-button"
                 :class="{ 'active-quest': activeQuest(quest_list.length-index-1) }"
                 @click="switchQuest(quest_list.length-index-1)">
-          <span class="icon-quest quest-item-icon"></span>
-          <label>{{ quest['title'] }}</label>
+          <span class="icon-quest quest-icon"></span>
+          <label class="quest-list-title">{{ quest['title'] }}</label>
         </button>
       </div>
+      <div v-else class="quest-list no-quest-info">当前用户没有问卷</div>
     </div>
     <div class="blank"></div>
     <div class="curr-quest-part">
       <div v-if="JSON.stringify(curr_quest) !== '{}'" class="opera-content">
+        <label v-if="curr_quest['status'] === 0"
+               class="status-unstarted">未发布</label>
+        <label v-else-if="curr_quest['status'] === 1"
+               class="status-published">已发布</label>
+        <label v-else-if="curr_quest['status'] === 2"
+               class="status-paused">已暂停</label>
         <button class="icon-edit   icon-button" title="修改问卷" @click="showEditQuest"></button>
-        <button class="icon-view   icon-button" title="预览问卷" @click=""></button>
-        <button class="icon-share  icon-button" title="分享问卷" @click=""></button>
-        <button class="icon-pause  icon-button" title="暂停问卷" @click=""></button>
+        <button class="icon-view   icon-button" title="预览问卷" @click="showView"></button>
+        <button class="icon-share  icon-button" title="分享问卷" @click="showShare"></button>
+        <button v-if="curr_quest['status'] === 1" class="icon-pause  icon-button"
+                title="暂停问卷" @click="showPause"></button>
+        <button v-else class="icon-publish  icon-button"
+                title="发布问卷" @click="showPublish"></button>
         <button class="icon-delete icon-button" title="删除问卷" @click="showDeleteQuest"></button>
       </div>
       <div v-if="JSON.stringify(curr_quest) !== '{}'" class="quest-content">
@@ -31,22 +41,23 @@
         <div v-for="(question, x) in curr_question_list" :key="x" class="question-part">
           <div class="question-card">
             <div class="question-info">
+              <label v-if="question['is_required'] === true" class="question-required">*</label>
               <label class="question-index">{{x+1}}.</label>
-              <label class="question-desc">{{ question['title'] }}</label>
+              <label class="question-desc">{{question['title']}}</label>
             </div>
             <div class="question-options">
               <label v-if="question['question_type'] === 1" v-for="(option, y) in question['options']" :key="y"
                      class="option-group">
-                <input v-if="curr_question_answer_list[x] === y" type="radio" :value=y v-model="curr_question_answer_list[x]"
-                       class="icon-single-choice-checked choice-icon"/>
+                <input v-if="curr_question_answer_list[x] === y" type="radio"
+                       :value=y v-model="curr_question_answer_list[x]" class="icon-single-choice-checked choice-icon"/>
                 <input v-else type="radio" :value=y v-model="curr_question_answer_list[x]"
                        class="icon-single-choice-unchecked choice-icon"/>
                 {{option['title']}}
               </label>
               <label v-if="question['question_type'] === 2" v-for="(option, y) in question['options']" :key="y"
                      class="option-group">
-                <input v-if="curr_question_answer_list[x].includes(y)" type="checkbox" :value=y v-model="curr_question_answer_list[x]"
-                       class="icon-multi-choice-checked choice-icon"/>
+                <input v-if="curr_question_answer_list[x].includes(y)" type="checkbox"
+                       :value=y v-model="curr_question_answer_list[x]" class="icon-multi-choice-checked choice-icon"/>
                 <input v-else type="checkbox" :value=y v-model="curr_question_answer_list[x]"
                        class="icon-multi-choice-unchecked choice-icon"/>
                 {{option['title']}}
@@ -77,9 +88,47 @@
       :message="modal_message"
       @close="modal_show = false"
       visible/>
+  <!-- 弹窗：预览问卷 -->
+  <InfoModal
+      v-if="view_show"
+      :type="'success'"
+      :message="'点击前往预览问卷'"
+      :cancel="true"
+      @submit="toView"
+      @close="view_show = false"
+      visible/>
+  <!-- 弹窗：分享问卷 -->
+  <InfoModal
+      v-if="share_show"
+      :type="'success'"
+      :message="share_message"
+      :ensure_text="'复制'"
+      :cancel="true"
+      @submit="copyLink"
+      @close="share_show = false"
+      visible/>
+  <!-- 弹窗：发布问卷 -->
+  <InfoModal
+      v-if="publish_show"
+      :type="'normal'"
+      :message="'确定要发布当前问卷吗'"
+      :cancel="true"
+      @submit="changeStatus(1)"
+      @close="publish_show = false"
+      visible/>
+  <!-- 弹窗：暂停问卷 -->
+  <InfoModal
+      v-if="pause_show"
+      :type="'warning'"
+      :message="'确定要暂停当前问卷吗'"
+      :cancel="true"
+      @submit="changeStatus(2)"
+      @close="pause_show = false"
+      visible/>
   <!-- 弹窗：创建问卷 -->
   <ModifyQuestModal
       v-if="create_quest_show"
+      :quest_desc="'感谢您抽出时间填写本次问卷，您的意见和建议就是我们前行的最大动力！ '"
       @submit="createQuest"
       @close="create_quest_show = false"
       visible/>
@@ -92,15 +141,18 @@
       @close="edit_quest_show = false"
       visible/>
   <!-- 弹窗：删除问卷 -->
-  <DeleteModal
+  <InfoModal
       v-if="delete_quest_show"
-      :message="delete_quest_message"
+      :type="'delete'"
+      :message="'确定要删除当前问卷吗？'"
+      :cancel="true"
       @submit="deleteQuest"
       @close="delete_quest_show = false"
       visible/>
   <!-- 弹窗：添加问题 -->
   <ModifyQuestionModal
       v-if="add_question_show"
+      :question_options="[]"
       @submit="addQuestion"
       @close="add_question_show = false"
   visible/>
@@ -115,9 +167,11 @@
       @close="edit_question_show = false"
   visible/>
   <!-- 弹窗：删除问题 -->
-  <DeleteModal
+  <InfoModal
       v-if="delete_question_show"
-      :message="delete_question_message"
+      :message="'确定要删除当前问题吗？'"
+      :type="'delete'"
+      :cancel="true"
       @submit="deleteQuestion"
       @close="delete_question_show = false"
       visible/>
@@ -127,14 +181,18 @@
 import { ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
+import { useRouter } from "vue-router";
 
 import InfoModal from '@/components/Modal-Info.vue';
 import ModifyQuestModal from '@/components/Modal-ModifyQuest.vue';
-import DeleteModal from '@/components/Modal-Delete.vue';
 import ModifyQuestionModal from '@/components/Modal-ModifyQuestion.vue';
 import API from '@/components/js/API.js';
 
-const user_info = useStore().getters.getUserInfo;
+const route = useRouter();
+
+const store = useStore();
+const user_info = store.getters.getUserInfo;
+const required_text = ref('（必填）');
 
 let quest_list = ref([]);    /* 当前用户全部问卷的列表 */
 let curr_quest = ref({});    /* 当前问卷信息 */
@@ -145,32 +203,30 @@ let modal_show = ref(false);
 let modal_type = ref('');
 let modal_message = ref('');
 
-let create_quest_show = ref(false);
+let view_show = ref(false);
+let share_show = ref(false);
+let share_message = ref('');
+let share_link = ref('');
+let publish_show = ref(false);
+let pause_show = ref(false);
 
+let create_quest_show = ref(false);
 let edit_quest_show = ref(false);
 let edit_quest_title = ref('');
 let edit_quest_desc = ref('');
-
 let delete_quest_show = ref(false);
-let delete_quest_message = ref('');
 
 let add_question_show = ref(false);
-
 let edit_question_show = ref(false);
 let edit_question_id = ref('');
 let edit_question_title = ref('');
 let edit_question_type = ref(0);
 let edit_question_required = ref(false);
 let edit_question_options = ref([]);
-
 let delete_question_show = ref(false);
-let delete_question_message = ref('');
 let delete_question_id = ref('');
 
-onMounted(() =>
-{
-  initQuestList();
-});
+onMounted(() => { initQuestList(); });
 
 const initQuestList = async () =>
 {
@@ -180,7 +236,7 @@ const initQuestList = async () =>
   {
     const response = await axios.get
     (
-        API.GET_quest_list,
+        API.GET_quest_list_by_user,
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }
@@ -220,41 +276,149 @@ const switchQuest = (index) =>
   getQuestionList();
 };
 
+const getQuestionList = async () =>
+{
+  const token = user_info['token'];
+  const url = API.GET_question_list.replace('{id}', curr_quest.value['id']);
+
+  try
+  {
+    const response = await axios.get
+    (
+        url,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+    );
+
+    if (response.status === 200)
+    {
+      curr_question_list.value = response.data;
+      curr_question_answer_list.value = [];
+      for (let i = 0; i < curr_question_list.value.length; i++)
+      {
+        switch (curr_question_list.value[i]['question_type'])
+        {
+          case 1: curr_question_answer_list.value.push(-1); break;
+          case 2: curr_question_answer_list.value.push([]); break;
+          case 3: curr_question_answer_list.value.push(''); break;
+          default: break;
+        }
+      }
+      console.log('问题列表获取成功：', curr_question_list.value);
+    }
+  }
+  catch (error)
+  {
+    console.error('问题列表获取失败：', error.response ? error.response.data : error.message);
+  }
+};
+
 const showInfoModal = (type, message, show) =>
 {
   modal_type.value = type;
   modal_message.value = message;
   modal_show.value = show;
 };
-const showCreateQuest = () => { create_quest_show.value = true; };
-const showEditQuest = () =>
+
+const showView = () => { view_show.value = true; };
+const toView = () =>
 {
-  edit_quest_title.value = curr_quest.value['title'];
-  edit_quest_desc.value = curr_quest.value['desc'];
-  edit_quest_show.value = true;
+  const id = curr_quest.value['id'];
+  const url = route.resolve({ name: 'view', params: {id} }).href;
+  window.open(url, '_blank');    /* 打开新网页 */
 };
-const showDeleteQuest = () =>
+
+const showShare = () =>
 {
-  delete_quest_show.value = true;
-  delete_quest_message.value = `确定要删除当前问卷吗？`;
+  const protocol = window.location.protocol + '//';
+  const hostname = window.location.hostname + ':';
+  const port = window.location.port;
+  const id = curr_quest.value['id'];
+  const url = route.resolve({ name: 'questionnaire', params: { id } }).href;
+  share_link.value = protocol + hostname + port + url;
+
+  switch (curr_quest.value['status'])
+  {
+    case 0:
+      showInfoModal('error', '问卷未发布，无法分享', true);
+      break;
+    case 1:
+      share_message = share_link.value;
+      share_show.value = true;
+      break;
+    case 2:
+      showInfoModal('error', '问卷已暂停，无法分享', true)
+      break;
+    default: break;
+  }
 };
-const showAddQuestion = () => { add_question_show.value = true; };
-const showEditQuestion = (index) =>
+const copyLink = async () =>
 {
-  edit_question_show.value = true;
-  edit_question_id.value = curr_question_list.value[index]['id'];
-  edit_question_title.value = curr_question_list.value[index]['title'];
-  edit_question_type.value = curr_question_list.value[index]['question_type'];
-  edit_question_required.value = curr_question_list.value[index]['is_required'];
-  edit_question_options.value = curr_question_list.value[index]['options'];
+  try
+  {
+    await navigator.clipboard.writeText(share_link.value);
+    console.log('链接复制成功：', share_link.value);
+  }
+  catch (error)
+  {
+    console.error('链接复制失败:', error);
+    showInfoModal('error', '链接复制失败，请稍后再试', true);
+  }
 };
-const showDeleteQuestion = (index) =>
+
+const showPublish = () => { publish_show.value = true; };
+const showPause = () => { pause_show.value = true; };
+const changeStatus = async (status) =>
 {
-  delete_question_show.value = true;
-  delete_question_message.value = `确定要删除当前问题吗？`;
-  delete_question_id.value = curr_question_list.value[index]['id'];
+  console.log('当前问卷状态：', curr_quest.value['status']);
+
+  const token = user_info['token'];
+  const data = 
+  {
+    'questionnaire_id': curr_quest.value['id'],
+    'status': status
+  };
+
+  try 
+  {
+    const response = await axios.patch
+    (
+      API.PATCH_quest_status,
+      data,
+      {
+        headers:
+          {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+      }
+    );
+
+    if (response.status === 200)
+    {
+      curr_quest.value['status'] = status;
+
+      switch (curr_quest.value['status'])
+      {
+        case 1:
+          console.log('问卷已发布：', curr_quest.value);
+          showInfoModal('success', '问卷已发布', true);
+          break;
+        case 2:
+          console.log('问卷已暂停：', curr_quest.value);
+          showInfoModal('success', '问卷已暂停', true);
+          break;
+        default: break;
+      }
+    }
+  }
+  catch (error)
+  {
+    console.error('问卷状态修改失败：', error.response ? error.response.data : error.message);
+    showInfoModal('error', '问卷状态修改失败，请稍后再试', true);
+  }
 }
 
+const showCreateQuest = () => { create_quest_show.value = true; };
 const createQuest = async (quest) =>
 {
   console.log('当前创建问卷：', quest);
@@ -274,7 +438,8 @@ const createQuest = async (quest) =>
         API.POST_quest_add,
         data,
         {
-          headers: {
+          headers:
+          {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
@@ -297,6 +462,12 @@ const createQuest = async (quest) =>
   }
 };
 
+const showEditQuest = () =>
+{
+  edit_quest_title.value = curr_quest.value['title'];
+  edit_quest_desc.value = curr_quest.value['desc'];
+  edit_quest_show.value = true;
+};
 const editQuest = async (quest) =>
 {
   console.log('当前修改问卷：', quest);
@@ -329,7 +500,7 @@ const editQuest = async (quest) =>
       curr_quest.value = response.data;
       /* 更新问卷列表 */
       const index = quest_list.value.findIndex(item => item['id'] === curr_quest['id']);
-      quest_list.value[index] = curr_quest.value;
+      quest_list.value.splice(index, 1, curr_quest.value);
       console.log('问卷修改成功：', curr_quest.value);
       showInfoModal('success', '问卷修改成功', true);
     }
@@ -341,6 +512,7 @@ const editQuest = async (quest) =>
   }
 };
 
+const showDeleteQuest = () => { delete_quest_show.value = true; };
 const deleteQuest = async () =>
 {
   console.log('当前删除问卷：', curr_quest.value);
@@ -379,42 +551,7 @@ const deleteQuest = async () =>
   }
 };
 
-const getQuestionList = async () =>
-{
-  const token = user_info['token'];
-  const url = API.GET_question_list.replace('{id}', curr_quest.value['id']);
-
-  try
-  {
-    const response = await axios.get
-    (
-        url,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-    );
-
-    if (response.status === 200)
-    {
-      curr_question_list.value = response.data;
-      curr_question_answer_list.value = [];
-      for (let i = 0; i < curr_question_list.value.length; i++)
-      {
-        switch (curr_question_list.value[i]['question_type'])
-        {
-          case 1: curr_question_answer_list.value.push(-1); break;
-          case 2: curr_question_answer_list.value.push([]); break;
-          case 3: curr_question_answer_list.value.push(''); break;
-          default: break;
-        }
-      }
-      console.log('问题列表获取成功：', curr_question_list.value);
-    }
-  }
-  catch (error)
-  {
-    console.error('问题列表获取失败：', error.response ? error.response.data : error.message);
-  }
-};
-
+const showAddQuestion = () => { add_question_show.value = true; };
 const addQuestion = async (question) =>
 {
   console.log('当前添加问题：', question);
@@ -466,6 +603,15 @@ const addQuestion = async (question) =>
   }
 };
 
+const showEditQuestion = (index) =>
+{
+  edit_question_show.value = true;
+  edit_question_id.value = curr_question_list.value[index]['id'];
+  edit_question_title.value = curr_question_list.value[index]['title'];
+  edit_question_type.value = curr_question_list.value[index]['question_type'];
+  edit_question_required.value = curr_question_list.value[index]['is_required'];
+  edit_question_options.value = curr_question_list.value[index]['options'];
+};
 const editQuestion = async (question) =>
 {
   console.log('当前修改问题：', question);
@@ -499,8 +645,8 @@ const editQuestion = async (question) =>
 
     if (response.status === 200)
     {
-      const index = curr_question_list.value.findIndex(item => item.id === question['id']);
-      curr_question_list.value[index] = response.data;
+      const index = curr_question_list.value.findIndex(item => item['id'] === data['id']);
+      curr_question_list.value.splice(index, 1, response.data)
       switch (curr_question_list.value[index]['question_type'])
       {
         case 1: curr_question_answer_list.value[index] = -1; break;
@@ -519,6 +665,11 @@ const editQuestion = async (question) =>
   }
 };
 
+const showDeleteQuestion = (index) =>
+{
+  delete_question_show.value = true;
+  delete_question_id.value = curr_question_list.value[index]['id'];
+};
 const deleteQuestion = async (question) =>
 {
   console.log('当前删除问题：', question);
@@ -560,9 +711,7 @@ const deleteQuestion = async (question) =>
   flex-direction: row;
   align-items: center;
   justify-content: start;
-
   position: fixed;
-
   top: 72px;
   left: 16px;
   right: 16px;
@@ -619,6 +768,13 @@ const deleteQuestion = async (question) =>
   overflow: auto;
 }
 
+.quest-list.no-quest-info
+{
+  justify-content: safe center;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .quest-item-button
 {
   display: flex;
@@ -640,30 +796,24 @@ const deleteQuestion = async (question) =>
   background-color: var(--color-shadow);
 }
 
-.quest-item-button label
-{
-  cursor: pointer;
-}
-
 .active-quest
 {
   color: var(--color-fill);
   background-color: var(--color-shadow);
 }
 
-.quest-item-icon
+.icon-quest.quest-icon
 {
-  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin: 0 5px 0 0;
   background-size: cover;
   background-position: center;
-  width: 20px;
-  height: 20px;
-  margin: 0 5px 0 0;
 }
 
-.quest-item-button label
+.quest-list-title
 {
-  max-width: 35vh;
+  max-width: 36vh;
   font-size: 18px;
   overflow: hidden;    /* 隐藏超出范围的文本 */
   text-overflow: ellipsis; /* 添加省略号 */
@@ -696,10 +846,21 @@ const deleteQuestion = async (question) =>
   display: flex;
   align-items: center;
   justify-content: left;
-
   width: 96%;
   height: 8%;
 }
+
+.opera-content label
+{
+  font-size: 14px;
+  margin-right: 4px;
+  padding: 4px 6px;
+  border-radius: var(--border-radius);
+}
+
+.status-unstarted { background-color: #D3D3D3; }
+.status-published { background-color: #CCFFCC; }
+.status-paused { background-color: #FFCCCC; }
 
 .init-info
 {

@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 import store from '@/store'
 
 import Home from '@/views/HomeView.vue'    /* 首页界面 */
 import Login from '@/views/LoginView.vue'    /* 用户登录界面 */
 import Register from '@/views/RegisterView.vue'    /* 用户注册页面 */
-import Quest from "@/views/QuestView.vue"    /* 问卷界面 */
+import ForgetPassword from "@/views/ForgetPasswordView.vue";
+import User from '@/views/UserView.vue'    /* 用户界面 */
+import Quest from "@/views/QuestView.vue"    /* 问卷管理界面 */
+import Questionnaire from "@/views/QuestionnaireView.vue";    /* 问卷预览/填写界面 */
 
 const routes =
     [
@@ -25,9 +27,29 @@ const routes =
             component: Register
         },
         {
+            path: '/forget_password',
+            name: 'forget_password',
+            component: ForgetPassword
+        },
+        {
+          path: '/user',
+          name: 'user',
+          component: User
+        },
+        {
             path: '/quest',
             name: 'quest',
             component: Quest
+        },
+        {
+            path: '/q/:id',
+            name: 'questionnaire',
+            component: Questionnaire
+        },
+        {
+            path: '/v/:id',
+            name: 'view',
+            component: Questionnaire,
         }
     ]
 

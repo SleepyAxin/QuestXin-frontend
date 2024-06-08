@@ -1,22 +1,22 @@
 <template>
   <div class="auth-box">
     <form class="image-form"></form>
-    <!-- 分隔线 -->
     <div class="separator"></div>
     <form class="auth-form">
       <h2 class="auth-title">登录</h2>
       <div class="form-group">
-        <!-- 用户图标 -->
         <span class="icon-email auth-icon"></span>
-        <input class="input-field" type="email" id="email" v-model="email" placeholder="请输入用户名">
+        <input class="input-field" type="email" v-model="email" placeholder="请输入邮箱">
       </div>
       <div class="form-group">
-        <!-- 密码图标 -->
         <span class="icon-password auth-icon"></span>
-        <input class="input-field" type="password" id="password" v-model="password" placeholder="请输入密码">
+        <input class="input-field" type="password" v-model="password" placeholder="请输入密码">
       </div>
-      <button type="submit" class="button-base auth-button" @click.prevent="login">登录</button>
-      <button class="to-button-base auth-to-button" @click="Router.toRegister">没有账号？点此注册</button>
+      <button class="button-base auth-button" @click.prevent="login">登录</button>
+      <button class="to-button-base auth-to-button forget-password"
+              @click="Router.toForgetPassword">忘记密码</button>
+      <button class="to-button-base auth-to-button to-register-button"
+              @click="Router.toRegister">没有账号？点此注册</button>
     </form>
   </div>
   <!-- 使用 Modal 组件 -->
@@ -47,6 +47,8 @@ let password = ref('');
 let modal_show = ref(false);
 let modal_type = ref('');
 let modal_message = ref('');
+
+let login_success = ref(false);
 
 /* 调用弹窗 */
 const showModal = (type, message, show) =>
@@ -115,7 +117,7 @@ const login = async () =>
       {
         console.log('保存Cookie失败：', error);
       }
-
+      login_success.value = true;
       showModal('success', '登录成功，点击确定前往首页', true);
     }
   }
@@ -140,11 +142,29 @@ const login = async () =>
 
 const handleEnsure = () =>
 {
-  console.log('登录成功，即将跳转到首页');
-  Router.toHome();
+  if (login_success.value)
+  {
+    console.log('登录成功，即将跳转到首页');
+    Router.toHome();
+  }
 };
 </script>
 
 <style scoped>
 @import url("@/components/css/Style-Auth.css");
+
+.to-button-base.auth-to-button.forget-password
+{
+  margin-top: 40px;
+}
+
+.to-button-base.auth-to-button.forget-password:hover::after
+{
+  transform: scaleX(0.25);   /* 鼠标移至按钮时显示下划线 */
+}
+
+.to-button-base.auth-to-button.to-register-button
+{
+  margin-top: 10px;
+}
 </style>

@@ -1,24 +1,21 @@
 <template>
   <!-- 头部 -->
-  <Header @showUserCard="showUserCard"></Header>
-  <!-- 用户卡片 -->
-  <UserCard
-      v-if="user_card_show"
-      @close="user_card_show=false"
-      visible></UserCard>
+  <Header :class="{ 'header-hidden': showHeader === false }"/>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import Header from "@/components/Header.vue";
-import UserCard from "@/components/UserCard.vue";
 
-let user_card_show = ref(false);
+const route = useRoute();
 
-const showUserCard = () =>
-{
-  user_card_show.value = true;
-};
+const showHeader = computed
+(() => {
+  // 列出需要隐藏头部的路由名称或路径
+  const hidden_routes = ['view', 'questionnaire'];    // 以路由名称为依据
+  return !hidden_routes.includes(route.name);
+});
 </script>
 
 <style>
@@ -34,5 +31,8 @@ body
   background-attachment: fixed;    /* 使背景图片填充整个页面 */
 }
 
-
+.header-hidden
+{
+  transform: translateY(-200%);
+}
 </style>

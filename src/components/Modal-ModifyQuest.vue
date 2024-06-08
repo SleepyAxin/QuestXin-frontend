@@ -5,12 +5,12 @@
       <div class="form-group">
         <span class="icon-title"></span>
         <label>问卷标题</label>
-        <input class="input-title" type="text" id="title" v-model="title"/>
+        <input class="input-title" type="text" v-model="title"/>
       </div>
       <div class="form-group form-desc">
         <span class="icon-desc"></span>
         <label>问卷描述</label>
-        <textarea class="input-desc" id="desc" v-model="desc"></textarea>
+        <textarea class="input-desc" v-model="desc"></textarea>
       </div>
       <div>
         <button class="button-base submit-button" type="submit" @click.prevent="submitTitleDesc">确定</button>

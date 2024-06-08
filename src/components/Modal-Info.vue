@@ -7,12 +7,20 @@
       <span v-else-if="type === 'success'" class="icon-success icon"></span>
       <!-- 警告 -->
       <span v-else-if="type === 'warning'" class="icon-warning icon"></span>
+      <!-- 删除 -->
+      <span v-else-if="type === 'delete'" class="icon-warning icon"></span>
       <!-- 错误 -->
       <span v-else-if="type === 'error'" class="icon-error icon"></span>
       <!-- 其它（普通） -->
       <span v-else class="icon-normal icon"></span>
-      <p class="modal-message">{{ message }}</p>
-      <button class="button-base modal-close" type="submit" @click="submitEnsure">确定</button>
+      <p class="modal-message" v-html="message"></p>
+      <div class="button-group">
+        <button v-if="type === 'delete'" class="button-base submit-button delete-button"
+                type="submit" @click="submitEnsure">{{ ensure_text }}</button>
+        <button v-else class="button-base submit-button"
+                type="submit" @click="submitEnsure">{{ ensure_text }}</button>
+        <button v-if="cancel" class="button-base cancel-button" @click="close">取消</button>
+      </div>
     </div>
   </div>
 </template>
@@ -25,7 +33,9 @@ defineProps
 ({
   visible: { type: Boolean, required: true, default: false },
   message: { type: String, required: true, default: '' },
-  type: { type: String, required: true, default: '' }
+  type: { type: String, required: true, default: '' },
+  ensure_text: { type: String, required: false, default: '确定'  },
+  cancel: { type: Boolean, required: false ,default: false }
 });
 
 const emit = defineEmits(['submit', 'close']);
@@ -60,16 +70,9 @@ const submitEnsure = () =>
 
 .modal
 {
-  background: var(--color-base);
-  padding: 20px;
-  border-radius: var(--border-radius);
   width: 300px;
-  height: 175px;
-  box-shadow: 0 2px 4px var(--color-shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 200px;
+  padding: 5px 5px;
 }
 
 .icon
@@ -86,8 +89,21 @@ const submitEnsure = () =>
   text-align: center;
 }
 
-.modal-close
+.button-group
 {
-  display: block;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.button-base.submit-button.delete-button
+{
+  background-color: var(--color-delete);
+}
+
+.button-base.submit-button.delete-button:hover
+{
+  background-color: var(--color-delete-darken);
 }
 </style>

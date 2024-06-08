@@ -13,7 +13,7 @@
       <div class="blank"></div>
       <div class="container">
         <span class="icon-user icon"></span>
-        <button class="to-button-base button" @click="clickShowUserCard">用户信息</button>
+        <button class="to-button-base button" @click="Router.toUser">用户信息</button>
       </div>
     </div>
     <!-- 未检测到用户登录，显示登录/注册按钮 -->
@@ -41,8 +41,6 @@ import { useStore } from 'vuex';
 import Router from '@/components/js/Router.js';
 import Cookie from "@/components/js/Cookie.js";
 
-const emit = defineEmits(['showUserCard']);
-
 const store = useStore();
 let user_info = computed(() => store.getters.getUserInfo);
 
@@ -50,22 +48,15 @@ onMounted(() =>
 {
   store.dispatch('updateUserInfo', Cookie.getUserInfoFromCookie());
 });
-
-const clickShowUserCard = () =>
-{
-  emit('showUserCard');
-};
 </script>
 
 <style scoped>
 header
 {
   padding: 10px;
-
   margin-top: 8px;    /* 距离网页顶端距离 */
   margin-left: 8px;   /* 距离网页左端距离 */
   margin-right: 8px;   /* 距离网页右端距离 */
-
   display: flex;
   flex-direction: row;
   align-items: center;
