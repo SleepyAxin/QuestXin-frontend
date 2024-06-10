@@ -85,7 +85,7 @@
 .question-index
 {
     font-weight: bold;
-    margin-right: 9px;
+    margin: 0 6px 0 0;
 }
 
 .question-required

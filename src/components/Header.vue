@@ -4,17 +4,15 @@
       <div class="img-logo" @click="Router.toHome"></div>
       <button class="web-title" @click="Router.toHome">问卷鑫</button>
     </div>
-    <!-- 检测到用户登录，显示用户操作按钮 -->
-    <div v-if="user_info !== null" class="right-box">
-      <div v-if="$route.name !== 'quest'" class="container">
-        <span class="icon-quest icon"></span>
-        <button class="to-button-base button" @click="Router.toQuest">问卷管理</button>
-      </div>
-      <div class="blank"></div>
-      <div class="container">
+    <div v-if="user_info !== null" ref="dropdown_container">
+      <div class="right-box user-box" @click="toggleDropdown">
         <span class="icon-user icon"></span>
-        <button class="to-button-base button" @click="Router.toUser">用户信息</button>
+        <button class="mine">我的</button>
       </div>
+      <button class="dropdown" v-if="show_dropdown">
+        <button @click="handleAction('user_info')">用户信息</button>
+        <button @click="handleAction('quest_manage')">问卷管理</button>
+      </button>
     </div>
     <!-- 未检测到用户登录，显示登录/注册按钮 -->
     <div v-else class="right-box">
@@ -36,7 +34,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import Router from '@/components/js/Router.js';
 import Cookie from "@/components/js/Cookie.js";
@@ -44,10 +42,43 @@ import Cookie from "@/components/js/Cookie.js";
 const store = useStore();
 let user_info = computed(() => store.getters.getUserInfo);
 
+let show_dropdown = ref(false);
+let dropdown_container = ref(null);
+
 onMounted(() =>
 {
   store.dispatch('updateUserInfo', Cookie.getUserInfoFromCookie());
+  window.addEventListener('click', handleClickOutside);
 });
+
+onBeforeUnmount(() =>
+{
+  window.removeEventListener('click', handleClickOutside);
+})
+
+const handleClickOutside = (event) =>
+{
+  if (dropdown_container.value && !dropdown_container.value.contains(event.target))
+    show_dropdown.value = false;
+};
+
+const toggleDropdown = () => { show_dropdown.value = !show_dropdown.value };
+
+const handleAction = (action) =>
+{
+  switch (action)
+  {
+    case 'user_info':
+      Router.toUser();
+      break;
+    case 'quest_manage':
+      Router.toQuest();
+      break;
+    default:
+      break;
+  }
+  show_dropdown.value = false;
+};
 </script>
 
 <style scoped>
@@ -95,6 +126,52 @@ header
   font-size: 22px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.right-box.user-box
+{
+  width: 100px;
+  cursor: pointer;
+}
+
+.mine
+{
+  background-color: var(--color-base);
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown 
+{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 20px;
+  margin-top: 20px;
+  padding: 7px 10px;
+  background-color: var(--color-base);
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 10px var(--color-shadow);
+  z-index: 1000;
+}
+
+.dropdown button
+{
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: transparent;
+  font-size: 16px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  padding: 5px 10px;
+}
+
+.dropdown button:hover
+{
+  background-color: var(--color-shadow);
 }
 
 .right-box

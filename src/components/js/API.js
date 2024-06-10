@@ -5,6 +5,8 @@ export default
     POST_auth_register: '/api/auth/register',
     POST_auth_forget_password: '/api/auth/forgot-password',
 
+    POST_user_delete: '/api/user/{id}',
+
     POST_default_custom_register: '/api/custom_register',
     POST_default_modify_password: '/api/reset_password',
     POST_default_forget_password: '/api/forget_password',
@@ -20,4 +22,6 @@ export default
     POST_question_edit: '/api/questionnaire/modify_question',
     DELETE_question_delete: '/api/questionnaire/delete_question?question_id={id}',
     GET_question_list: '/api/questionnaire/get_quest_list?questionnaire_id={id}',
+
+    POST_answer_upload: '/api/answer/upload_answer_list'
 }

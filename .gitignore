@@ -2,6 +2,8 @@
 /node_modules
 /dist
 
+# Prettier 配置文件
+.prettierrc
 
 # local env files
 .env.local

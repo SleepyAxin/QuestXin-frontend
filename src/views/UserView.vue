@@ -13,7 +13,6 @@
     <div class="opera-part">
       <button class="to-button-base button-opera" @click="showModifyPassword">修改密码</button>
       <button class="to-button-base button-opera" @click="showLogout">登出</button>
-      <button class="to-button-base button-opera button-delete" @click="showDeleteUser">删除账号</button>
       <button class="button-base user-card-close" @click="close">关闭</button>
     </div>
   </div>
@@ -58,7 +57,6 @@ let modal_type = ref('');
 let modal_message = ref('');
 
 let modify_password_show = ref(false);
-
 let logout_show = ref(false);
 
 defineProps
@@ -81,7 +79,8 @@ const modifyPassword = async (password) =>
 {
   const token = user_info['token'];
 
-  try {
+  try 
+  {
     const response = await axios.post
     (
         API.POST_default_modify_password,
@@ -140,7 +139,6 @@ const logout = async () =>
 </script>
 
 <style scoped>
-
 .user-card
 {
   display: flex;
@@ -235,16 +233,6 @@ const logout = async () =>
 .to-button-base.button-opera:hover::after
 {
   transform: scaleX(0.9);
-}
-
-.to-button-base.button-opera.button-delete
-{
-  color: var(--color-delete);
-}
-
-.to-button-base.button-opera.button-delete::after
-{
-  background-color: var(--color-delete)
 }
 
 .separator

@@ -42,11 +42,12 @@
           <div class="question-card">
             <div class="question-info">
               <label v-if="question['is_required'] === true" class="question-required">*</label>
-              <label class="question-index">{{x+1}}.</label>
+              <h4 class="question-index">{{x+1}}.</h4>
               <label class="question-desc">{{question['title']}}</label>
             </div>
             <div class="question-options">
-              <label v-if="question['question_type'] === 1" v-for="(option, y) in question['options']" :key="y"
+              <template v-if="question['question_type'] === 1">
+                <label v-for="(option, y) in question['options']" :key="y"
                      class="option-group">
                 <input v-if="curr_question_answer_list[x] === y" type="radio"
                        :value=y v-model="curr_question_answer_list[x]" class="icon-single-choice-checked choice-icon"/>
@@ -54,7 +55,9 @@
                        class="icon-single-choice-unchecked choice-icon"/>
                 {{option['title']}}
               </label>
-              <label v-if="question['question_type'] === 2" v-for="(option, y) in question['options']" :key="y"
+              </template>
+              <template v-if="question['question_type'] === 2">
+                <label v-for="(option, y) in question['options']" :key="y"
                      class="option-group">
                 <input v-if="curr_question_answer_list[x].includes(y)" type="checkbox"
                        :value=y v-model="curr_question_answer_list[x]" class="icon-multi-choice-checked choice-icon"/>
@@ -62,6 +65,7 @@
                        class="icon-multi-choice-unchecked choice-icon"/>
                 {{option['title']}}
               </label>
+              </template>
               <textarea v-if="question['question_type'] === 3" v-model="curr_question_answer_list[x]"
                         class="fill-blank-area"></textarea>
             </div>
@@ -192,7 +196,6 @@ const route = useRouter();
 
 const store = useStore();
 const user_info = store.getters.getUserInfo;
-const required_text = ref('（必填）');
 
 let quest_list = ref([]);    /* 当前用户全部问卷的列表 */
 let curr_quest = ref({});    /* 当前问卷信息 */
