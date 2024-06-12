@@ -149,7 +149,7 @@ const initQuestions = async () =>
   {
     const id = route.params.id.toString();
     const url = API.GET_question_list.replace('{id}', id);
-      const response = await axios.get(url);
+    const response = await axios.get(url);
 
     if (response.status === 200)
     {
@@ -198,8 +198,68 @@ const submitAnswers = async () =>
     showModal('error', '预览状态下无法提交问卷！', true);
     return;
   }
-  console.log('提交问卷：', curr_question_answer_list.value);
-  checkRequiredQuestions();
+
+  if (!checkRequiredQuestions()) return;
+
+  let answer = [];
+
+  for (let i = 0; i < curr_question_answer_list.value.length; i++)
+  {
+    switch (curr_question_list.value[i]['question_type'])
+    {
+      case 1:
+        answer.push
+        ({
+          'question_id': curr_question_list.value[i]['id'],
+          'question_type': curr_question_list.value[i]['question_type'],
+          'answer_option': [curr_question_answer_list.value[i]],
+          'answer_text': ''
+        });
+        break;
+      case 2:
+        answer.push
+        ({
+          'question_id': curr_question_list.value[i]['id'],
+          'question_type': curr_question_list.value[i]['question_type'],
+          'answer_option': curr_question_answer_list.value[i],
+          'answer_text': ''
+        });
+        break;
+      case 3:
+        answer.push
+        ({
+          'question_id': curr_question_list.value[i]['id'],
+          'question_type': curr_question_list.value[i]['question_type'],
+          'answer_option': [0],
+          'answer_text': curr_question_answer_list.value[i]
+        });
+        break;
+      default: break;
+    }
+  }
+
+  console.log('答案列表：', answer);
+
+  try
+  {
+    const response = await axios.post
+    (
+      API.POST_answer_upload,
+      answer,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.status === 200)
+    {
+      console.log('提交问卷成功：', response.data);
+      showModal('success', '提交问卷成功！', true);
+    }
+  }
+  catch (error)
+  {
+    console.error('提交问卷失败：', error.response ? error.response.data : error.message);
+    showModal('error', '提交问卷失败，请稍后再试', true);
+  }
 };
 
 /* 检查必答题目并跳转到未填写的题目位置 */
@@ -216,7 +276,7 @@ const checkRequiredQuestions = () =>
           {
             showModal('error', '第' + (i + 1) + '题是必答题，请填写！', true);
             window.location.hash = `#question-${i + 1}`;
-            return;
+            return false;
           }
           break;
         case 2:
@@ -224,7 +284,7 @@ const checkRequiredQuestions = () =>
           {
             showModal('error', '第' + (i + 1) + '题是必答题，请填写！', true);
             window.location.hash = `#question-${i + 1}`;
-            return;
+            return false;
           }
           break;
         case 3:
@@ -232,13 +292,15 @@ const checkRequiredQuestions = () =>
           {
             showModal('error', '第' + (i + 1) + '题是必答题，请填写！', true);
             window.location.hash = `#question-${i + 1}`;
-            return;
+            return false;
           }
           break;
         default: break;
       }
     }
   }
+
+  return true;    /* 所有必答题目均已回答 */
 };
 
 const clearOptions = (index) =>

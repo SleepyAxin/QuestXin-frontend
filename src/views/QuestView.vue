@@ -70,7 +70,8 @@
                         class="fill-blank-area"></textarea>
             </div>
           </div>
-          <div class="opera-part">
+          <!-- 当问卷未发布时才允许修改 -->
+          <div v-if="curr_quest['status'] === 0" class="opera-part">
             <button class="button-base edit-question-button" @click="showEditQuestion(x)">编辑</button>
             <button class="button-base delete-question-button" @click="showDeleteQuestion(x)">删除</button>
           </div>

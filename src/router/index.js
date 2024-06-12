@@ -8,6 +8,7 @@ import ForgetPassword from "@/views/ForgetPasswordView.vue";
 import User from '@/views/UserView.vue'    /* 用户界面 */
 import Quest from "@/views/QuestView.vue"    /* 问卷管理界面 */
 import Questionnaire from "@/views/QuestionnaireView.vue";    /* 问卷预览/填写界面 */
+import Result from "@/views/ResultView.vue";    /* 问卷统计结果界面 */
 
 const routes =
     [
@@ -32,9 +33,9 @@ const routes =
             component: ForgetPassword
         },
         {
-          path: '/user',
-          name: 'user',
-          component: User
+            path: '/user',
+            name: 'user',
+            component: User
         },
         {
             path: '/quest',
@@ -50,6 +51,11 @@ const routes =
             path: '/v/:id',
             name: 'view',
             component: Questionnaire,
+        },
+        {
+            path: '/r/:id',
+            name: 'result',
+            component: Result
         }
     ]
 

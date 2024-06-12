@@ -39,7 +39,12 @@ export default
     },
     toView(id)
     {
-        try {Router.push({name: 'view', params: { id }}).then(); }
+        try { Router.push({name: 'view', params: { id }}).then(); }
         catch (error) { console.error('“预览”的路由未找到', error); }
+    },
+    toResult(id)
+    {
+        try { Router.push({name: 'result', params: { id }}).then(); }
+        catch (error) { console.error('“结果”的路由未找到', error); }
     }
 };
