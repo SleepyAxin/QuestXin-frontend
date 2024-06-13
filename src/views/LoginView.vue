@@ -41,14 +41,14 @@ import Router from '@/components/js/Router.js';
 
 const store = useStore();
 
-let email = ref('');
-let password = ref('');
+const email = ref('');
+const password = ref('');
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
-let login_success = ref(false);
+const login_success = ref(false);
 
 /* 调用弹窗 */
 const showModal = (type, message, show) =>
@@ -151,7 +151,7 @@ const handleEnsure = () =>
 </script>
 
 <style scoped>
-@import url("@/components/css/Style-Auth.css");
+@import url("../components/css/Style-Auth.css");
 
 .to-button-base.auth-to-button.forget-password
 {

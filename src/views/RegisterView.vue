@@ -50,21 +50,21 @@ import Modal from '@/components/Modal-Info.vue';
 import API from '@/components/js/API.js';
 import Router from '@/components/js/Router.js';
 
-let email = ref('');
-let password = ref('');
-let passwordAgain = ref('');
-let code = ref('');
+const email = ref('');
+const password = ref('');
+const passwordAgain = ref('');
+const code = ref('');
 
-let button_text = ref('获取');
-let button_disabled = ref(false);
-let count_down = ref(15);
-let timer = ref(-1);
+const button_text = ref('获取');
+const button_disabled = ref(false);
+const count_down = ref(15);
+const timer = ref(-1);
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
-let register_success = ref(false);
+const register_success = ref(false);
 
 const showModal = (type, message, show) =>
 {
@@ -216,5 +216,5 @@ const handleEnsure = () =>
 </script>
 
 <style scoped>
-@import url("@/components/css/Style-Auth.css");
+@import url("../components/css/Style-Auth.css");
 </style>

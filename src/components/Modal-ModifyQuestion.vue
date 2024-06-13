@@ -76,7 +76,7 @@
       v-if="modal_show"
       :type="modal_type"
       :message="modal_message"
-      @close="modal_show = false"
+      @close="closeModal()"
       visible/>
 </template>
 
@@ -95,14 +95,14 @@ const props = defineProps
 
 const emit = defineEmits(['submit', 'close']);
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
-let title = ref(props.question_title);
-let type = ref(props.question_type);
-let required = ref(props.question_required);
-let options = ref(props.question_options);
+const title = ref(props.question_title);
+const type = ref(props.question_type);
+const required = ref(props.question_required);
+const options = ref(props.question_options);
 
 onMounted(() =>
 {
@@ -119,6 +119,13 @@ const showModal = (type, message, show) =>
   modal_type.value = type;
   modal_message.value = message;
   modal_show.value = show;
+  document.removeEventListener('keydown', handleKeydown);
+};
+
+const closeModal = () =>
+{
+  document.addEventListener('keydown', handleKeydown);
+  modal_show.value = false;
 };
 
 const close = () =>

@@ -59,14 +59,14 @@
       @submit="submitAnswers"
       @close="submit_show = false"
       visible/>
-  <!-- 弹窗：问卷错误 -->
+  <!-- 弹窗：问卷错误/提交成功 -->
   <InfoModal
-      v-if="error_show"
-      :type="'error'"
-      :message="error_message"
+      v-if="to_show"
+      :type="to_type"
+      :message="to_message"
       @submit="Router.toHome()"
       @close="Router.toHome()"
-      visible/>
+      visible/>    
 </template>
 
 <script setup>
@@ -79,17 +79,18 @@ import InfoModal from '@/components/Modal-Info.vue';
 
 const route = useRoute();
 
-let curr_quest = ref({});    /* 当前问卷信息 */
-let curr_question_list = ref([]);    /* 当前问卷问题列表 */
-let curr_question_answer_list = ref([]);    /* 当前问卷答案列表 */
-let quest_show = ref(false);    /* 是否显示问卷 */
+const curr_quest = ref({});    /* 当前问卷信息 */
+const curr_question_list = ref([]);    /* 当前问卷问题列表 */
+const curr_question_answer_list = ref([]);    /* 当前问卷答案列表 */
+const quest_show = ref(false);    /* 是否显示问卷 */
 
-let modal_show = ref(false); 
-let modal_type = ref(''); 
-let modal_message = ref('');
-let error_show = ref(false);
-let error_message = ref('');
-let submit_show = ref(false);
+const modal_show = ref(false); 
+const modal_type = ref(''); 
+const modal_message = ref('');
+const submit_show = ref(false);
+const to_show = ref(false);
+const to_type = ref('');
+const to_message = ref('');
 
 onMounted
 (() =>
@@ -132,14 +133,14 @@ const initQuest = async () =>
       else
       {
         console.error('问卷内容获取失败：', '问卷未发布或已暂停');
-        showError('问卷未发布或已暂停', true);
+        showTo('error', '问卷未发布或已暂停', true);
       }
     }
   }
   catch (error)
   {
     console.error('问卷内容获取失败：', error.response ? error.response.data : error.message);
-    showError('问卷未找到', true);
+    showTo('error', '问卷未找到', true);
   }
 };
 
@@ -184,20 +185,26 @@ const showModal = (type, message, show) =>
   modal_show.value = show;
 };
 
-const showError = (message, show) =>
+const showTo = (type, message, show) =>
 {
-  error_message.value = message;
-  error_show.value = show;
+  to_type.value = type;
+  to_message.value = message;
+  to_show.value = show;
 };
 
-const showSubmit = () => { submit_show.value = true; };
-const submitAnswers = async () =>
-{
+const showSubmit = () => 
+{ 
   if (route.name === 'view')
   {
     showModal('error', '预览状态下无法提交问卷！', true);
     return;
   }
+
+  submit_show.value = true; 
+};
+const submitAnswers = async () =>
+{
+  if (route.name === 'view') return;
 
   if (!checkRequiredQuestions()) return;
 
@@ -252,7 +259,7 @@ const submitAnswers = async () =>
     if (response.status === 200)
     {
       console.log('提交问卷成功：', response.data);
-      showModal('success', '提交问卷成功！', true);
+      showTo('success', '提交问卷成功！', true);
     }
   }
   catch (error)
@@ -316,18 +323,20 @@ const clearOptions = (index) =>
 </script>
 
 <style scoped>
-@import url('@/components/css/Style-Quest.css');
+@import url('../components/css/Style-Quest.css');
 
 .questionnaire
 {
   position: absolute;
-  top: 70px;
+  background-color: var(--color-base);
+  top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: auto;
 }
 
@@ -338,12 +347,14 @@ const clearOptions = (index) =>
   justify-content: center;
   align-items: center;
   width: 60%;
+  margin-top: 40px;
   background-color: transparent;
 }
 
 .question-card
 {
   margin-left: 7.5%;
+  margin-bottom: 20px;
   width: 70%;
 }
 
@@ -354,27 +365,5 @@ const clearOptions = (index) =>
   margin-top: 20px;
   margin-bottom: 40px;
   font-size: 20px;
-}
-
-.info-card
-{
-  position: fixed;
-  top: 800%;
-  left: 50%;
-  width: 400px;
-  height: 200px;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--color-base);
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 4px var(--color-shadow);
-}
-
-.info-card label
-{
-  font-size: 24px;
-  font-weight: bold;
 }
 </style>

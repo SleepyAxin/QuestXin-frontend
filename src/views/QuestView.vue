@@ -1,7 +1,7 @@
 <template>
   <div class="quest-box">
     <div class="all-quest-part">
-      <button class="button-base create-button" @click="showCreateQuest">
+      <button class="button-base create-button" @click="showCreateQuest()">
         <span class="icon-create icon-button"></span>
         创建问卷
       </button>
@@ -25,14 +25,16 @@
                class="status-published">已发布</label>
         <label v-else-if="curr_quest['status'] === 2"
                class="status-paused">已暂停</label>
-        <button class="icon-edit   icon-button" title="修改问卷" @click="showEditQuest"></button>
-        <button class="icon-view   icon-button" title="预览问卷" @click="showView"></button>
-        <button class="icon-share  icon-button" title="分享问卷" @click="showShare"></button>
+        <button class="icon-edit   icon-button" title="修改问卷" @click="showEditQuest()"></button>
+        <button class="icon-view   icon-button" title="预览问卷" @click="showView()"></button>
+        <button class="icon-share  icon-button" title="分享问卷" @click="showShare()"></button>
         <button v-if="curr_quest['status'] === 1" class="icon-pause  icon-button"
-                title="暂停问卷" @click="showPause"></button>
+                title="暂停问卷" @click="showPause()"></button>
         <button v-else class="icon-publish  icon-button"
-                title="发布问卷" @click="showPublish"></button>
-        <button class="icon-delete icon-button" title="删除问卷" @click="showDeleteQuest"></button>
+                title="发布问卷" @click="showPublish()"></button>
+        <button class="icon-delete icon-button" title="删除问卷" @click="showDeleteQuest()"></button>
+        <button v-if="curr_quest['status'] !== 0" class="button-base  result-button" 
+                @click="showResult()">查看结果</button>
       </div>
       <div v-if="JSON.stringify(curr_quest) !== '{}'" class="quest-content">
         <h2 class="quest-title">{{ curr_quest['title'] }}</h2>
@@ -76,7 +78,7 @@
             <button class="button-base delete-question-button" @click="showDeleteQuestion(x)">删除</button>
           </div>
         </div>
-        <button class="button-base add-question-button" @click="showAddQuestion">
+        <button v-if="curr_quest['status'] === 0" class="button-base add-question-button" @click="showAddQuestion()">
           <span class="icon-add icon-button"/>添加问题
         </button>
       </div>
@@ -133,7 +135,7 @@
   <!-- 弹窗：创建问卷 -->
   <ModifyQuestModal
       v-if="create_quest_show"
-      :quest_desc="'感谢您抽出时间填写本次问卷，您的意见和建议就是我们前行的最大动力！ '"
+      :quest_desc="'感谢您抽出时间填写本次问卷，您的意见和建议就是我们前行的最大动力！'"
       @submit="createQuest"
       @close="create_quest_show = false"
       visible/>
@@ -153,6 +155,15 @@
       :cancel="true"
       @submit="deleteQuest"
       @close="delete_quest_show = false"
+      visible/>
+      <!-- 弹窗：查看结果 -->
+  <InfoModal
+      v-if="result_show"
+      :type="'success'"
+      :message="'点击确定前往查看结果'"
+      :cancel="true"
+      @submit="toResult"
+      @close="result_show = false"
       visible/>
   <!-- 弹窗：添加问题 -->
   <ModifyQuestionModal
@@ -198,37 +209,38 @@ const route = useRouter();
 const store = useStore();
 const user_info = store.getters.getUserInfo;
 
-let quest_list = ref([]);    /* 当前用户全部问卷的列表 */
-let curr_quest = ref({});    /* 当前问卷信息 */
-let curr_question_list = ref([]);    /* 当前问卷问题列表 */
-let curr_question_answer_list = ref([]);    /* 当前问卷答案 */
+const quest_list = ref([]);    /* 当前用户全部问卷的列表 */
+const curr_quest = ref({});    /* 当前问卷信息 */
+const curr_question_list = ref([]);    /* 当前问卷问题列表 */
+const curr_question_answer_list = ref([]);    /* 当前问卷答案 */
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
-let view_show = ref(false);
-let share_show = ref(false);
-let share_message = ref('');
-let share_link = ref('');
-let publish_show = ref(false);
-let pause_show = ref(false);
+const view_show = ref(false);
+const share_show = ref(false);
+const share_message = ref('');
+const share_link = ref('');
+const publish_show = ref(false);
+const pause_show = ref(false);
 
-let create_quest_show = ref(false);
-let edit_quest_show = ref(false);
-let edit_quest_title = ref('');
-let edit_quest_desc = ref('');
-let delete_quest_show = ref(false);
+const create_quest_show = ref(false);
+const edit_quest_show = ref(false);
+const edit_quest_title = ref('');
+const edit_quest_desc = ref('');
+const delete_quest_show = ref(false);
+const result_show = ref(false);
 
-let add_question_show = ref(false);
-let edit_question_show = ref(false);
-let edit_question_id = ref('');
-let edit_question_title = ref('');
-let edit_question_type = ref(0);
-let edit_question_required = ref(false);
-let edit_question_options = ref([]);
-let delete_question_show = ref(false);
-let delete_question_id = ref('');
+const add_question_show = ref(false);
+const edit_question_show = ref(false);
+const edit_question_id = ref('');
+const edit_question_title = ref('');
+const edit_question_type = ref(0);
+const edit_question_required = ref(false);
+const edit_question_options = ref([]);
+const delete_question_show = ref(false);
+const delete_question_id = ref('');
 
 onMounted(() => { initQuestList(); });
 
@@ -555,6 +567,14 @@ const deleteQuest = async () =>
   }
 };
 
+const showResult = () => { result_show.value = true; };
+const toResult = () =>
+{
+  const id = curr_quest.value['id'];
+  const url = route.resolve({ name: 'result', params: {id} }).href;
+  window.open(url, '_blank');    /* 打开新网页 */
+};
+
 const showAddQuestion = () => { add_question_show.value = true; };
 const addQuestion = async (question) =>
 {
@@ -707,7 +727,7 @@ const deleteQuestion = async (question) =>
 </script>
 
 <style scoped>
-@import url('@/components/css/Style-Quest.css');
+@import url('../components/css/Style-Quest.css');
 
 .quest-box
 {
@@ -753,6 +773,15 @@ const deleteQuestion = async (question) =>
   margin: 0 5px;
   width: 28px;
   height: 28px;
+}
+
+.result-button
+{
+  width: 76px;
+  height: 28px;
+  padding: 0 0;
+  font-size: 15px;
+  margin-left: auto;
 }
 
 .quest-list

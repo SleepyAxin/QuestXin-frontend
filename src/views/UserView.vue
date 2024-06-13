@@ -50,14 +50,14 @@ import Cookie from '@/components/js/Cookie.js';
 import Router from '@/components/js/Router.js';
 
 const store = useStore();
-let user_info = store.getters.getUserInfo;
+const user_info = store.getters.getUserInfo;
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
-let modify_password_show = ref(false);
-let logout_show = ref(false);
+const modify_password_show = ref(false);
+const logout_show = ref(false);
 
 defineProps
 ({

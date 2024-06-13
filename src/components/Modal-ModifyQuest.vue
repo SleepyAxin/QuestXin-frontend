@@ -23,7 +23,7 @@
       v-if="modal_show"
       :type="modal_type"
       :message="modal_message"
-      @close="modal_show = false"
+      @close="closeModal()"
       visible/>
 </template>
 
@@ -40,12 +40,12 @@ const props = defineProps
   quest_desc: { type: String, required: false, default: '' }
 });
 
-let title = ref(props.quest_title);
-let desc = ref(props.quest_desc);
+const title = ref(props.quest_title);
+const desc = ref(props.quest_desc);
 
-let modal_show = ref(false);
-let modal_type = ref('');
-let modal_message = ref('');
+const modal_show = ref(false);
+const modal_type = ref('');
+const modal_message = ref('');
 
 onMounted(() =>
 {
@@ -62,6 +62,13 @@ const showModal = (type, message, show) =>
   modal_type.value = type;
   modal_message.value = message;
   modal_show.value = show;
+  document.removeEventListener('keydown', handleKeydown);
+};
+
+const closeModal = () =>
+{
+  document.addEventListener('keydown', handleKeydown);
+  modal_show.value = false;
 };
 
 const handleKeydown = (event) =>
@@ -87,7 +94,7 @@ const submitTitleDesc = () =>
   const quest =
       {
         'title': title.value,
-        'desc': desc.value
+        'desc': desc.value,
       };
 
   emit('submit', quest);
@@ -97,7 +104,7 @@ const submitTitleDesc = () =>
 </script>
 
 <style scoped>
-@import url('@/components/css/Style-Modal.css');
+@import url('../components/css/Style-Modal.css');
 
 .modal
 {

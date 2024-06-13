@@ -8,8 +8,8 @@ import Header from "@/components/Header.vue";
 </script>
 
 <style>
-@import url("@/components/css/Style.css");     /* 全局样式 */
-@import url("@/components/css/Variable.css");    /* 全局变量 */
+@import url("./components/css/Style.css");     /* 全局样式 */
+@import url("./components/css/Variable.css");    /* 全局变量 */
 
 body
 {

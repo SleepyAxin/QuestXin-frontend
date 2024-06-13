@@ -66,7 +66,7 @@ const submitEnsure = () =>
 </script>
 
 <style scoped>
-@import url('@/components/css/Style-Modal.css');
+@import url('../components/css/Style-Modal.css');
 
 .modal
 {

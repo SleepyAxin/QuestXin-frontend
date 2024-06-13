@@ -40,10 +40,10 @@ import Router from '@/components/js/Router.js';
 import Cookie from "@/components/js/Cookie.js";
 
 const store = useStore();
-let user_info = computed(() => store.getters.getUserInfo);
+const user_info = computed(() => store.getters.getUserInfo);
 
-let show_dropdown = ref(false);
-let dropdown_container = ref(null);
+const show_dropdown = ref(false);
+const dropdown_container = ref(null);
 
 onMounted(() =>
 {
