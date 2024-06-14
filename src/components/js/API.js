@@ -23,5 +23,7 @@ export default
     DELETE_question_delete: '/api/questionnaire/delete_question?question_id={id}',
     GET_question_list: '/api/questionnaire/get_quest_list?questionnaire_id={id}',
 
-    POST_answer_upload: '/api/answer/upload_answers_list'
+    POST_answer_upload: '/api/answer/upload_answers_list',
+
+    POST_result_get: '/api/result/get_result?questionnaire_id={id}'
 }

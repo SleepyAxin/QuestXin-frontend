@@ -15,9 +15,10 @@
             <template v-if="question['question_type'] === 1">
               <label v-for="(option, y) in question['options']" :key="y"
                    class="option-group">
-                <input v-if="curr_question_answer_list[x] === y" type="radio" :value=y v-model="curr_question_answer_list[x]"
+                <input v-if="curr_question_answer_list[x] === option['id']" type="radio" 
+                       :value="option['id']" v-model="curr_question_answer_list[x]"
                       class="icon-single-choice-checked choice-icon"/>
-                <input v-else type="radio" :value=y v-model="curr_question_answer_list[x]"
+                <input v-else type="radio" :value="option['id']" v-model="curr_question_answer_list[x]"
                       class="icon-single-choice-unchecked choice-icon"/>
                 {{option['title']}}
               </label>
@@ -25,9 +26,10 @@
             <template v-if="question['question_type'] === 2">
               <label v-for="(option, y) in question['options']" :key="y"
                    class="option-group">
-                <input v-if="curr_question_answer_list[x].includes(y)" type="checkbox" :value=y v-model="curr_question_answer_list[x]"
+                <input v-if="curr_question_answer_list[x].includes(option['id'])" type="checkbox" 
+                       :value="option['id']" v-model="curr_question_answer_list[x]"
                       class="icon-multi-choice-checked choice-icon"/>
-                <input v-else type="checkbox" :value=y v-model="curr_question_answer_list[x]"
+                <input v-else type="checkbox" :value="option['id']" v-model="curr_question_answer_list[x]"
                       class="icon-multi-choice-unchecked choice-icon"/>
                 {{option['title']}}
               </label>
@@ -214,7 +216,7 @@ const submitAnswers = async () =>
   {
     switch (curr_question_list.value[i]['question_type'])
     {
-      case 1:
+      case 1:    /* 单选题 */
         answer.push
         ({
           'question_id': curr_question_list.value[i]['id'],
@@ -223,7 +225,7 @@ const submitAnswers = async () =>
           'answer_text': ''
         });
         break;
-      case 2:
+      case 2:    /* 多选题 */
         answer.push
         ({
           'question_id': curr_question_list.value[i]['id'],
@@ -232,14 +234,17 @@ const submitAnswers = async () =>
           'answer_text': ''
         });
         break;
-      case 3:
-        answer.push
-        ({
-          'question_id': curr_question_list.value[i]['id'],
-          'question_type': curr_question_list.value[i]['question_type'],
-          'answer_option': [0],
-          'answer_text': curr_question_answer_list.value[i]
-        });
+      case 3:    /* 填空题（不为空时上传答案） */
+        if (curr_question_answer_list.value[i] !== '')
+        {
+          answer.push
+          ({
+            'question_id': curr_question_list.value[i]['id'],
+            'question_type': curr_question_list.value[i]['question_type'],
+            'answer_option': [0],
+            'answer_text': curr_question_answer_list.value[i]
+          });
+        }
         break;
       default: break;
     }

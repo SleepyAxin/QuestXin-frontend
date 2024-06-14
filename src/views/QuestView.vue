@@ -6,10 +6,10 @@
         创建问卷
       </button>
       <div v-if="quest_list.length !== 0" class="quest-list">
-        <button v-for="(quest, index) in [...quest_list].reverse()" :key="index"
+        <button v-for="(quest, index) in quest_list" :key="index"
                 class="quest-item-button"
-                :class="{ 'active-quest': activeQuest(quest_list.length-index-1) }"
-                @click="switchQuest(quest_list.length-index-1)">
+                :class="{ 'active-quest': activeQuest(index) }"
+                @click="switchQuest(index)">
           <span class="icon-quest quest-icon"></span>
           <label class="quest-list-title">{{ quest['title'] }}</label>
         </button>
@@ -358,7 +358,7 @@ const showShare = () =>
       showInfoModal('error', '问卷未发布，无法分享', true);
       break;
     case 1:
-      share_message = share_link.value;
+      share_message.value = share_link.value;
       share_show.value = true;
       break;
     case 2:
@@ -787,9 +787,9 @@ const deleteQuestion = async (question) =>
 .quest-list
 {
   display: flex;
-  flex-direction: column;    /* 倒序排列 */
+  flex-direction: column-reverse;    /* 倒序排列 */
   align-items: center;    /* 居中对齐 */
-  justify-content: safe start;
+  justify-content: safe start;    /* 顶部对齐 */
   border-radius: var(--border-radius);
   box-shadow: 0 2px 4px var(--color-shadow-darken);
   width: 95%;
