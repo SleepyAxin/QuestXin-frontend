@@ -358,7 +358,7 @@ const showShare = () =>
       showInfoModal('error', '问卷未发布，无法分享', true);
       break;
     case 1:
-      share_message = share_link.value;
+      share_message.value = share_link.value;
       share_show.value = true;
       break;
     case 2:
