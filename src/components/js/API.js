@@ -25,5 +25,6 @@ export default
 
     POST_answer_upload: '/api/answer/upload_answers_list',
 
-    POST_result_get: '/api/result/get_result?questionnaire_id={id}'
+    POST_result_get: '/api/result/get_result?questionnaire_id={id}',
+    POST_result_excel: '/api/result/get_result_excel?questionnaire_id={id}'
 }

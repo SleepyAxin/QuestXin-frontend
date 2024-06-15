@@ -4,6 +4,7 @@
       <h2 class="quest-title">{{ curr_quest['title'] }}</h2>
       <h3 class="quest-desc">{{ curr_quest['desc'] }}</h3>
       <div class="quest-underline"></div>
+      <button class="button-base downlaod-button" @click="downloadExcel()">导出Excel</button>
       <div v-for="(question, x) in curr_question_list" :key="x" class="question-part">
         <div class="question-card">
           <div class="question-info" :id="'question-' + (x + 1)">
@@ -29,16 +30,25 @@
         </div>
         <div v-if="question['question_type'] !== 3" class="chart-button-group">
           <button class="button-base chart-button" @click="showChart(x, 'column')">柱状图</button>
+          <button class="button-base chart-button" @click="showChart(x, 'bar')">条形图</button>
           <button class="button-base chart-button" @click="showChart(x, 'pie')">饼状图</button>
           <button class="button-base chart-button" @click="showChart(x, 'circle')">圆环图</button>
-          <button class="button-base chart-button" @click="showChart(x, 'bar')">条形图</button>
           <button class="button-base chart-button" @click="showChart(x, '')">隐藏图表</button>
         </div>
         <div v-else class="chart-button-group">
-          <button class="button-base chart-button">详细内容</button>
+          <button v-if="chart_show[x] === true" class="button-base chart-button" 
+                  @click="showContent(x)">收起</button>
+          <button v-else class="button-base chart-button" 
+                  @click="showContent(x)">详细内容</button>
         </div>
-        <div v-if="chart_show[x] === true" class="chart-card">
+        <div v-if="chart_show[x] === true && question['question_type'] !== 3" class="chart-card">
           <v-chart :option="chart_list[x]" autoresize></v-chart>
+        </div>
+        <div v-if="chart_show[x] === true && question['question_type'] === 3" class="content-card">
+          <div v-for="(text, y) in getContent(x)" :key="y">
+            <label class="text-label">{{ text }}</label>
+            <div class="text-separator"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -194,6 +204,42 @@ const getResult = async () =>
   }
 };
 
+const downloadExcel =  async () =>
+{
+  const id = route.params.id;
+  const token = user_info['token'];
+  const url = API.POST_result_excel.replace('{id}', id);
+
+  try 
+  {
+    const response = await axios.post
+    (
+      url, 
+      {}, 
+      { 
+        responseType: 'blob',    /* 将文件作为二进制接受 */
+        headers: { Authorization: `Bearer ${token}` } 
+      }
+    );
+
+    if (response.status === 200)
+    {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', curr_quest.value['title'] + '.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+  catch (error)
+  {
+    console.error('结果下载失败：', error.response ? error.response.data : error.message);
+    showModal('error', '结果下载失败', true);
+  }
+};
+
 const getOptionResult = (option) =>
 {
   const question_id = option['question_id'];
@@ -219,9 +265,9 @@ const showChart = (index, type) =>
   switch (type)
   {
     case 'column': showColumn(option_result_list, index); break;
+    case 'bar': showBar(option_result_list, index); break;
     case 'pie': showPie(option_result_list, index); break;
     case 'circle': showCircle(option_result_list, index); break;
-    case 'bar': showBar(option_result_list, index); break;
     default: break;
   }
 };
@@ -242,6 +288,26 @@ const showColumn = (option_result_list, index) =>
     tooltip: {},
     xAxis: { data: x_axis_data },
     yAxis: {},
+    series: [{ name: '选择人数', type: 'bar', data: series_data }]
+  };
+};
+
+const showBar = (option_result_list, index) =>
+{
+  const y_axis_data = [];
+  for (let i = 0; i < option_result_list.length; i++)
+    y_axis_data.push('选项' + (i + 1));
+
+  const series_data = [];
+  for (let i = 0; i < option_result_list.length; i++)
+    series_data.push(option_result_list[i]['count']);
+
+  chart_list.value[index] = 
+  {
+    title: { text: '' },
+    tooltip: {},
+    xAxis: {},
+    yAxis: { data: y_axis_data },
     series: [{ name: '选择人数', type: 'bar', data: series_data }]
   };
 };
@@ -290,25 +356,14 @@ const showCircle = (option_result_list, index) =>
   };
 };
 
-const showBar = (option_result_list, index) =>
+const showContent = (index) => { chart_show.value[index] = !chart_show.value[index];}
+
+const getContent = (index) =>
 {
-  const y_axis_data = [];
-  for (let i = 0; i < option_result_list.length; i++)
-    y_axis_data.push('选项' + (i + 1));
-
-  const series_data = [];
-  for (let i = 0; i < option_result_list.length; i++)
-    series_data.push(option_result_list[i]['count']);
-
-  chart_list.value[index] = 
-  {
-    title: { text: '' },
-    tooltip: {},
-    xAxis: {},
-    yAxis: { data: y_axis_data },
-    series: [{ name: '选择人数', type: 'bar', data: series_data }]
-  };
-}
+  const question_id = curr_question_list.value[index]['id'];
+  const text_list = result_list.value.find(item => item['question_id'] === question_id)['free_text_answers'];
+  return text_list;
+};
 </script>
 
 <style scoped>
@@ -366,6 +421,12 @@ const showBar = (option_result_list, index) =>
   background-color: var(--color-shadow-darken);
 }
 
+.button-base.downlaod-button
+{
+  padding: 5px 8px;
+  margin-bottom: 10px;
+}
+
 .title-form 
 {
   display: flex;
@@ -406,5 +467,25 @@ const showBar = (option_result_list, index) =>
 {
   width: 70%;
   height: 300px;
+}
+
+.content-card
+{
+  width: 70%;
+  height: auto;
+}
+
+.text-label
+{
+  width: 100%;
+}
+
+.text-separator
+{
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: 100%;
+  height: 0.1vh;
+  background-color: var(--color-shadow-darken);
 }
 </style>

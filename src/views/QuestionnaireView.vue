@@ -254,6 +254,9 @@ const submitAnswers = async () =>
 
   try
   {
+    const ip = await getIP();
+    console.log('IP地址：', ip);
+
     const response = await axios.post
     (
       API.POST_answer_upload,
@@ -323,6 +326,20 @@ const clearOptions = (index) =>
     case 2: curr_question_answer_list.value.splice(index, 1, []); break;
     case 3: curr_question_answer_list.value.splice(index, 1, ''); break;
     default: break;
+  }
+};
+
+const getIP = async () =>
+{
+  try 
+  {
+    const response = await axios.get('https://api.ipify.org?format=json');
+    return response.data['ip'];
+  }
+  catch (error)
+  {
+    console.error('获取IP地址失败：', error.response ? error.response.data : error.message);
+    return '';
   }
 };
 </script>

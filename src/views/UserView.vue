@@ -59,11 +59,6 @@ const modal_message = ref('');
 const modify_password_show = ref(false);
 const logout_show = ref(false);
 
-defineProps
-({
-  visible: {type: Boolean, required: true, default: false}
-});
-
 const showInfoModal = (type, message, show) =>
 {
   modal_type.value = type;
