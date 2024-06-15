@@ -94,12 +94,15 @@ const to_show = ref(false);
 const to_type = ref('');
 const to_message = ref('');
 
+const curr_ip = ref('');
+
 onMounted
-(() =>
+(async () =>
 {
   window.addEventListener('hashchange', handleHashChange);
-  initQuest();    /* 装载问卷信息 */
-  initQuestions();    /* 装载问卷问题 */
+  await initQuest();    /* 装载问卷信息 */
+  await initQuestions();    /* 装载问卷问题 */
+  await getIP();    /* 获取IP地址 */
 });
 
 const handleHashChange = () => 
@@ -207,8 +210,10 @@ const showSubmit = () =>
 const submitAnswers = async () =>
 {
   if (route.name === 'view') return;
-
   if (!checkRequiredQuestions()) return;
+
+  const submit_time = new Date().toLocaleString();
+  console.log('提交时间：', submit_time);
 
   let answer = [];
 
@@ -222,7 +227,9 @@ const submitAnswers = async () =>
           'question_id': curr_question_list.value[i]['id'],
           'question_type': curr_question_list.value[i]['question_type'],
           'answer_option': [curr_question_answer_list.value[i]],
-          'answer_text': ''
+          'answer_text': '',
+          'ip_address': curr_ip.value,
+          'create_time': submit_time,
         });
         break;
       case 2:    /* 多选题 */
@@ -231,7 +238,9 @@ const submitAnswers = async () =>
           'question_id': curr_question_list.value[i]['id'],
           'question_type': curr_question_list.value[i]['question_type'],
           'answer_option': curr_question_answer_list.value[i],
-          'answer_text': ''
+          'answer_text': '',
+          'ip_address': ip_address.value,
+          'create_time': submit_time,
         });
         break;
       case 3:    /* 填空题（不为空时上传答案） */
@@ -242,7 +251,9 @@ const submitAnswers = async () =>
             'question_id': curr_question_list.value[i]['id'],
             'question_type': curr_question_list.value[i]['question_type'],
             'answer_option': [0],
-            'answer_text': curr_question_answer_list.value[i]
+            'answer_text': curr_question_answer_list.value[i],
+            'ip_address': ip_address.value,
+            'create_time': submit_time,
           });
         }
         break;
@@ -254,9 +265,6 @@ const submitAnswers = async () =>
 
   try
   {
-    const ip = await getIP();
-    console.log('IP地址：', ip);
-
     const response = await axios.post
     (
       API.POST_answer_upload,
@@ -334,12 +342,13 @@ const getIP = async () =>
   try 
   {
     const response = await axios.get('https://api.ipify.org?format=json');
-    return response.data['ip'];
+    curr_ip.value = response.data['ip'];
+    console.log('IP地址：', curr_ip.value);
   }
   catch (error)
   {
     console.error('获取IP地址失败：', error.response ? error.response.data : error.message);
-    return '';
+    curr_ip.value = '';
   }
 };
 </script>
