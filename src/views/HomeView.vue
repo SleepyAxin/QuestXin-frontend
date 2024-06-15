@@ -159,7 +159,7 @@
 }
 
 .member-1-photo {
-  background-image: url("@/assets/hitori.jpg");
+  background-image: url("@/assets/member-1.jpg");
   background-size: cover;
   background-position: center;
 }

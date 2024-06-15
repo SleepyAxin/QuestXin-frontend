@@ -18,6 +18,7 @@
     --image-background-auth: url('@/assets/Background-Auth.svg');    /* 登录/注册盒子背景图片 */
     --image-background-quest: url('@/assets/Background-Quest.svg');    /* 问卷背景图片 */
 
+    --image-member-1: url('@/assets/member-1.jpg');
     --image-member-3: url('@/assets/member-3.jpg');
     --image-logo: url('@/assets/Logo.png');    /* LOGO */
 }
