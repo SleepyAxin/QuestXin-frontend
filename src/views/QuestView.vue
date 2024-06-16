@@ -18,21 +18,30 @@
     </div>
     <div class="blank"></div>
     <div class="curr-quest-part">
-      <div v-if="JSON.stringify(curr_quest) !== '{}'" class="opera-content">
+      <div v-if="JSON.stringify(curr_quest) !== '{}'" class="opera-content" ref="QRCode_container">
         <label v-if="curr_quest['status'] === 0"
                class="status-unstarted">未发布</label>
         <label v-else-if="curr_quest['status'] === 1"
                class="status-published">已发布</label>
         <label v-else-if="curr_quest['status'] === 2"
                class="status-paused">已暂停</label>
-        <button class="icon-edit   icon-button" title="修改问卷" @click="showEditQuest()"></button>
-        <button class="icon-view   icon-button" title="预览问卷" @click="showView()"></button>
-        <button class="icon-share  icon-button" title="分享问卷" @click="showShare()"></button>
+        <button class="icon-edit icon-button" title="修改问卷" @click="showEditQuest()"></button>
+        <button class="icon-view icon-button" title="预览问卷" @click="showView()"></button>
+        <template v-if="curr_quest['status'] === 1">
+          <button class="icon-share icon-button" title="分享问卷" @click="showQRCode()"></button>
+          <div v-if="QRCode_show === true" class="QRCode-container">
+            <img :src="QRCode_url" alt="QR Code"/>
+          </div>
+        </template>
         <button v-if="curr_quest['status'] === 1" class="icon-pause  icon-button"
                 title="暂停问卷" @click="showPause()"></button>
         <button v-else class="icon-publish  icon-button"
                 title="发布问卷" @click="showPublish()"></button>
         <button class="icon-delete icon-button" title="删除问卷" @click="showDeleteQuest()"></button>
+        <template v-if="curr_quest['status'] === 1">
+          <input type="text" :value="curr_share_link" :readonly="true" class="link_text"/>
+          <button class="button-base copy-button" @click="copyLink()">复制</button>       
+        </template>
         <button v-if="curr_quest['status'] !== 0" class="button-base  result-button" 
                 @click="showResult()">查看结果</button>
       </div>
@@ -79,7 +88,8 @@
           </div>
         </div>
         <button v-if="curr_quest['status'] === 0" class="button-base add-question-button" @click="showAddQuestion()">
-          <span class="icon-add icon-button"/>添加问题
+          <span class="icon-add icon-button"></span>
+          添加问题
         </button>
       </div>
       <div v-else class="init-info">
@@ -89,115 +99,71 @@
     </div>
   </div>
   <!-- 弹窗：信息 -->
-  <InfoModal
-      v-if="modal_show"
-      :type="modal_type"
-      :message="modal_message"
+  <InfoModal v-if="modal_show" 
+      :type="modal_type" :message="modal_message"
       @close="modal_show = false"
       visible/>
   <!-- 弹窗：预览问卷 -->
-  <InfoModal
-      v-if="view_show"
-      :type="'success'"
-      :message="'点击前往预览问卷'"
-      :cancel="true"
-      @submit="toView"
-      @close="view_show = false"
-      visible/>
-  <!-- 弹窗：分享问卷 -->
-  <InfoModal
-      v-if="share_show"
-      :type="'success'"
-      :message="share_message"
-      :ensure_text="'复制'"
-      :cancel="true"
-      @submit="copyLink"
-      @close="share_show = false"
+  <InfoModal v-if="view_show" 
+      :type="'success'" :message="'点击前往预览问卷'" :cancel="true"
+      @submit="toView" @close="view_show = false"
       visible/>
   <!-- 弹窗：发布问卷 -->
-  <InfoModal
-      v-if="publish_show"
-      :type="'normal'"
-      :message="'确定要发布当前问卷吗'"
-      :cancel="true"
-      @submit="changeStatus(1)"
-      @close="publish_show = false"
+  <InfoModal v-if="publish_show"
+      :type="'normal'" :message="'确定要发布当前问卷吗'" :cancel="true"
+      @submit="changeStatus(1)" @close="publish_show = false"
       visible/>
   <!-- 弹窗：暂停问卷 -->
-  <InfoModal
-      v-if="pause_show"
-      :type="'warning'"
-      :message="'确定要暂停当前问卷吗'"
-      :cancel="true"
-      @submit="changeStatus(2)"
-      @close="pause_show = false"
+  <InfoModal v-if="pause_show"
+      :type="'warning'" :message="'确定要暂停当前问卷吗'" :cancel="true"
+      @submit="changeStatus(2)" @close="pause_show = false"
       visible/>
   <!-- 弹窗：创建问卷 -->
-  <ModifyQuestModal
-      v-if="create_quest_show"
+  <ModifyQuestModal v-if="create_quest_show"
       :quest_desc="'感谢您抽出时间填写本次问卷，您的意见和建议就是我们前行的最大动力！'"
-      @submit="createQuest"
-      @close="create_quest_show = false"
+      @submit="createQuest" @close="create_quest_show = false"
       visible/>
   <!-- 弹窗：修改问卷 -->
-  <ModifyQuestModal
-      v-if="edit_quest_show"
-      :quest_title="edit_quest_title"
-      :quest_desc="edit_quest_desc"
+  <ModifyQuestModal v-if="edit_quest_show"
+      :quest_title="edit_quest_title" :quest_desc="edit_quest_desc"
       @submit="editQuest"
       @close="edit_quest_show = false"
       visible/>
   <!-- 弹窗：删除问卷 -->
   <InfoModal
       v-if="delete_quest_show"
-      :type="'delete'"
-      :message="'确定要删除当前问卷吗？'"
-      :cancel="true"
-      @submit="deleteQuest"
-      @close="delete_quest_show = false"
+      :type="'delete'" :message="'确定要删除当前问卷吗？'" :cancel="true"
+      @submit="deleteQuest" @close="delete_quest_show = false"
       visible/>
-      <!-- 弹窗：查看结果 -->
-  <InfoModal
-      v-if="result_show"
-      :type="'success'"
-      :message="'点击确定前往查看结果'"
-      :cancel="true"
-      @submit="toResult"
-      @close="result_show = false"
+  <!-- 弹窗：查看结果 -->
+  <InfoModal v-if="result_show"
+      :type="'success'" :message="'点击确定前往查看结果'" :cancel="true"
+      @submit="toResult" @close="result_show = false"
       visible/>
   <!-- 弹窗：添加问题 -->
-  <ModifyQuestionModal
-      v-if="add_question_show"
+  <ModifyQuestionModal v-if="add_question_show" 
       :question_options="[]"
-      @submit="addQuestion"
-      @close="add_question_show = false"
-  visible/>
+      @submit="addQuestion" @close="add_question_show = false"
+      visible/>
   <!-- 弹窗：修改问题 -->
-  <ModifyQuestionModal
-      v-if="edit_question_show"
-      :question_title="edit_question_title"
-      :question_type="edit_question_type"
-      :question_required="edit_question_required"
-      :question_options="edit_question_options"
-      @submit="editQuestion"
-      @close="edit_question_show = false"
-  visible/>
+  <ModifyQuestionModal v-if="edit_question_show"
+      :question_title="edit_question_title" :question_type="edit_question_type"
+      :question_required="edit_question_required" :question_options="edit_question_options"
+      @submit="editQuestion" @close="edit_question_show = false"
+      visible/>
   <!-- 弹窗：删除问题 -->
-  <InfoModal
-      v-if="delete_question_show"
-      :message="'确定要删除当前问题吗？'"
-      :type="'delete'"
-      :cancel="true"
-      @submit="deleteQuestion"
-      @close="delete_question_show = false"
+  <InfoModal v-if="delete_question_show"
+      :message="'确定要删除当前问题吗？'" :type="'delete'" :cancel="true"
+      @submit="deleteQuestion" @close="delete_question_show = false"
       visible/>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
-import axios from 'axios';
 import { useRouter } from "vue-router";
+import axios from 'axios';
+import QRCode from 'qrcode';
 
 import InfoModal from '@/components/Modal-Info.vue';
 import ModifyQuestModal from '@/components/Modal-ModifyQuest.vue';
@@ -211,6 +177,7 @@ const user_info = store.getters.getUserInfo;
 
 const quest_list = ref([]);    /* 当前用户全部问卷的列表 */
 const curr_quest = ref({});    /* 当前问卷信息 */
+const curr_share_link = ref('');    /* 当前问卷分享链接 */
 const curr_question_list = ref([]);    /* 当前问卷问题列表 */
 const curr_question_answer_list = ref([]);    /* 当前问卷答案 */
 
@@ -219,11 +186,12 @@ const modal_type = ref('');
 const modal_message = ref('');
 
 const view_show = ref(false);
-const share_show = ref(false);
-const share_message = ref('');
-const share_link = ref('');
 const publish_show = ref(false);
 const pause_show = ref(false);
+
+const QRCode_show = ref(false);
+const QRCode_url = ref('');
+const QRCode_container = ref(null);
 
 const create_quest_show = ref(false);
 const edit_quest_show = ref(false);
@@ -242,7 +210,22 @@ const edit_question_options = ref([]);
 const delete_question_show = ref(false);
 const delete_question_id = ref('');
 
-onMounted(() => { initQuestList(); });
+onMounted
+(async () => { 
+  await initQuestList(); 
+  window.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() =>
+{
+  window.removeEventListener('click', handleClickOutside);
+});
+
+const handleClickOutside = (event) =>
+{
+  if (QRCode_container.value && !QRCode_container.value.contains(event.target))
+    QRCode_show.value = false;
+};
 
 const initQuestList = async () =>
 {
@@ -286,10 +269,36 @@ const activeQuest = (index) =>
   return false;
 };
 
-const switchQuest = (index) =>
+const switchQuest = async (index) =>
 {
   curr_quest.value = quest_list.value[index];
-  getQuestionList();
+  await generateLink();    /* 生成当前问卷分享链接 */
+  await generateQRCode();    /* 生成当前问卷分享二维码 */
+  await getQuestionList();    /* 获取当前问卷问题 */
+};
+
+const generateLink = async () =>
+{
+  const protocol = window.location.protocol + '//';
+  const hostname = window.location.hostname + ':';
+  const port = window.location.port;
+  const id = curr_quest.value['id'];
+  const url = route.resolve({ name: 'questionnaire', params: { id } }).href;
+
+  curr_share_link.value = protocol + hostname + port + url;
+};
+
+const generateQRCode = async () =>
+{
+  try 
+  {
+    QRCode_url.value = await QRCode.toDataURL(curr_share_link.value);
+    console.log('二维码生成成功');
+  } 
+  catch (error) 
+  {
+    console.error('二维码生成失败：', error)
+  }
 };
 
 const getQuestionList = async () =>
@@ -343,36 +352,14 @@ const toView = () =>
   window.open(url, '_blank');    /* 打开新网页 */
 };
 
-const showShare = () =>
-{
-  const protocol = window.location.protocol + '//';
-  const hostname = window.location.hostname + ':';
-  const port = window.location.port;
-  const id = curr_quest.value['id'];
-  const url = route.resolve({ name: 'questionnaire', params: { id } }).href;
-  share_link.value = protocol + hostname + port + url;
-
-  switch (curr_quest.value['status'])
-  {
-    case 0:
-      showInfoModal('error', '问卷未发布，无法分享', true);
-      break;
-    case 1:
-      share_message.value = share_link.value;
-      share_show.value = true;
-      break;
-    case 2:
-      showInfoModal('error', '问卷已暂停，无法分享', true)
-      break;
-    default: break;
-  }
-};
+const showQRCode = () => { QRCode_show.value = !QRCode_show.value; };
 const copyLink = async () =>
 {
   try
   {
-    await navigator.clipboard.writeText(share_link.value);
-    console.log('链接复制成功：', share_link.value);
+    await navigator.clipboard.writeText(curr_share_link.value);
+    console.log('链接复制成功：', curr_share_link.value);
+    showInfoModal('success', '链接已复制到剪贴板', true);
   }
   catch (error)
   {
@@ -773,6 +760,42 @@ const deleteQuestion = async (question) =>
   margin: 0 5px;
   width: 28px;
   height: 28px;
+}
+
+.QRCode-container
+{
+  position: relative;
+  top: 30px;
+  left: -79px;
+  z-index: 1000;
+  width: 0;
+  height: 0;
+}
+
+.QRCode-container img
+{
+  width: 120px;
+  height: 120px;
+  border-radius: var(--border-radius);
+}
+
+.link_text
+{
+  width: 250px;
+  height: 30px;
+  margin-left: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-fill);
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.button-base.copy-button
+{
+  padding: 0 0;
+  width: 45px;
+  height: 30px;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
 .result-button

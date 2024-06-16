@@ -40,8 +40,12 @@
   </div>
 </template>
 
+<script setup>
+</script>
+
 <style scoped>
-.home {
+.home 
+{
   position: fixed;
   top: 0;
   left: 0;
@@ -52,12 +56,14 @@
   z-index: -1;
 }
 
-.section {
+.section 
+{
   padding: 20px;
   text-align: center;
 }
 
-.section-intro {
+.section-intro 
+{
   position: relative;
   /* 添加渐变背景 */
   background-image: var(--image-background-home), linear-gradient(to bottom right, white, lightblue);
@@ -72,7 +78,8 @@
   overflow: hidden;
 }
 
-.section-intro h1 {
+.section-intro h1 
+{
   position: absolute;
   top: 45%;
   left: 50%;
@@ -88,7 +95,8 @@
   -webkit-text-stroke: 1px #62f5c9; /* 添加描边 */
 }
 
-.section-intro h2 {
+.section-intro h2 
+{
   position: absolute;
   top: 63%;
   left: 50%;
@@ -104,14 +112,16 @@
   color: #ffffff;
 }
 
-.section2 {
+.section2 
+{
   height: 600px;
   min-width: 900px;
   background-color: #ffffff;
   padding: 40px 20px;
 }
 
-.Title-RD-Team {
+.Title-RD-Team 
+{
   font-size: 4em;
   font-weight: 600;
   margin-top: 60px;
@@ -119,67 +129,81 @@
   text-align: center;
 }
 
-.team-members {
+.team-members 
+{
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-.member {
+.member 
+{
   text-align: center;
 }
 
-.member-photo {
+.member-photo 
+{
   width: 200px;
   height: 200px;
   background-color: #ccc; /* 占位符颜色 */
   border-radius: 50%;
   margin-bottom: 25px;
+  transition: transform 0.5s ease;    /* 添加平滑过渡效果 */
 }
 
-.member-info {
+.member-photo:hover
+{
+  transform: rotate(360deg);    /* 鼠标悬停时旋转180度 */
+}
+
+.member-info 
+{
   text-align: center;
 }
 
-.member-name {
+.member-name 
+{
   font-size: 1.5em;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.member-title {
+.member-title 
+{
   font-size: 1.1em;
   color: #666;
 }
 
-.member-subtitle {
+.member-subtitle 
+{
   font-family: "Cascadia Mono", monospace;
   font-size: 1em;
   color: #999;
 }
 
-.member-1-photo {
+.member-1-photo 
+{
   background-image: url("@/assets/member-1.jpg");
   background-size: cover;
   background-position: center;
 }
 
-.member-2-photo {
+.member-2-photo 
+{
   background-image: url("@/assets/hitori.jpg");
   background-size: cover;
   background-position: center;
 }
 
-.member-3-photo {
+.member-3-photo 
+{
   background-image: var(--image-member-3);
   background-size: cover;
   background-position: center;
 }
 
-.section3 {
+.section3 
+{
   background-color: #e2e2e2;
 }
 </style>
-
-<script setup>
-</script>

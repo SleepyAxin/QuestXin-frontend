@@ -13,7 +13,7 @@
     <div class="opera-part">
       <button class="to-button-base button-opera" @click="showModifyPassword">修改密码</button>
       <button class="to-button-base button-opera" @click="showLogout">登出</button>
-      <button class="button-base user-card-close" @click="close">关闭</button>
+      <button class="button-base user-card-close" @click="Router.toHome()">返回主页</button>
     </div>
   </div>
   <InfoModal
@@ -240,7 +240,7 @@ const logout = async () =>
 
 .user-card-close
 {
-  padding: 8px 30px;
+  padding: 8px 20px;
   transform: translateY(200%);
 }
 </style>

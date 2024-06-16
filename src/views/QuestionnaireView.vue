@@ -45,6 +45,10 @@
     </div>
     <button type="submit" class="button-base submit-button"
             @click.prevent="showSubmit">提交</button>
+    <label class="quest-footer">
+      <label class="footer-title" @click="Router.toHome()" title="前往首页">问卷鑫 </label>
+      <label>提供技术支持</label>
+    </label>
   </div>
   <InfoModal
       v-if="modal_show"
@@ -393,8 +397,23 @@ const getIP = async () =>
 {
   width: 150px;
   height: 50px;
-  margin-top: 20px;
-  margin-bottom: 40px;
+  margin: 20px 0 20px 0;
   font-size: 20px;
+}
+
+.quest-footer
+{
+  margin-bottom: 20px;
+}
+
+.quest-footer label
+{
+  font-size: 16px;
+}
+
+.footer-title
+{
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>
