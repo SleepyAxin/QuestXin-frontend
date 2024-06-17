@@ -183,14 +183,14 @@
 
 .member-1-photo 
 {
-  background-image: url("@/assets/member-1.jpg");
+  background-image: var(--image-member-1);
   background-size: cover;
   background-position: center;
 }
 
 .member-2-photo 
 {
-  background-image: url("@/assets/hitori.jpg");
+  background-image: var(--image-member-2);
   background-size: cover;
   background-position: center;
 }

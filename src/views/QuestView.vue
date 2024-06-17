@@ -236,9 +236,7 @@ const initQuestList = async () =>
     const response = await axios.get
     (
         API.GET_quest_list_by_user,
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
+        { headers: { 'Authorization': `Bearer ${token}` } }
     );
 
     if (response.status === 200)
@@ -249,15 +247,7 @@ const initQuestList = async () =>
   }
   catch (error)
   {
-    switch (error.response.status)
-    {
-      case 404:
-        console.error('问卷列表获取失败：当前用户没有问卷', error.response ? error.response.data : error.message);
-        break;
-      default:
-        console.error('问卷列表获取失败，请稍后再试', error.response ? error.response.data : error.message);
-        break;
-    }
+    console.error('问卷列表获取失败：', error.response ? error.response.data : error.message);
   }
 };
 

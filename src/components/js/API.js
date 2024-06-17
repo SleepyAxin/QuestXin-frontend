@@ -5,8 +5,6 @@ export default
     POST_auth_register: '/api/auth/register',
     POST_auth_forget_password: '/api/auth/forgot-password',
 
-    POST_user_delete: '/api/user/{id}',
-
     POST_default_custom_register: '/api/custom_register',
     POST_default_modify_password: '/api/reset_password',
     POST_default_forget_password: '/api/forget_password',

@@ -439,9 +439,10 @@ const getContent = (index) =>
 .title-text 
 { 
   width: 60%;
+  
   cursor: unset;
   word-wrap: unset;    
-  word-break: unset;    
+  overflow: hidden;    /* 隐藏超出范围的文本 */
   text-overflow: ellipsis; /* 添加省略号 */
   white-space: nowrap;   /* 确保文本在一行内显示 */
 }
@@ -478,6 +479,8 @@ const getContent = (index) =>
 .text-label
 {
   width: 100%;
+  word-break: break-all;    /* 允许在任何字符点换行 */
+  word-wrap: break-word;    /* 自动换行 */
 }
 
 .text-separator

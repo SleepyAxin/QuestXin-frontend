@@ -243,7 +243,7 @@ const submitAnswers = async () =>
           'question_type': curr_question_list.value[i]['question_type'],
           'answer_option': curr_question_answer_list.value[i],
           'answer_text': '',
-          'ip_address': ip_address.value,
+          'ip_address': curr_ip.value,
           'create_time': submit_time,
         });
         break;
@@ -256,7 +256,7 @@ const submitAnswers = async () =>
             'question_type': curr_question_list.value[i]['question_type'],
             'answer_option': [0],
             'answer_text': curr_question_answer_list.value[i],
-            'ip_address': ip_address.value,
+            'ip_address': curr_ip.value,
             'create_time': submit_time,
           });
         }

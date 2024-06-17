@@ -19,6 +19,7 @@
     --image-background-quest: url('@/assets/Background-Quest.svg');    /* 问卷背景图片 */
 
     --image-member-1: url('@/assets/member-1.jpg');
+    --image-member-2: url('@/assets/member-2.jpg');
     --image-member-3: url('@/assets/member-3.jpg');
     --image-logo: url('@/assets/Logo.png');    /* LOGO */
 }
