@@ -243,4 +243,5 @@ const logout = async () =>
   padding: 8px 20px;
   transform: translateY(200%);
 }
+
 </style>

@@ -72,7 +72,7 @@
   background-position: center, center; /* 背景图片和渐变背景都居中对齐 */
   height: 100vh;
   min-height: 500px;
-  min-width: 800px;
+  min-width: 900px;
   color: white;
   margin-top: -20px;
   overflow: hidden;
