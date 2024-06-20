@@ -40,7 +40,8 @@
         <button class="icon-delete icon-button" title="删除问卷" @click="showDeleteQuest()"></button>
         <template v-if="curr_quest['status'] === 1">
           <input type="text" :value="curr_share_link" :readonly="true" class="link_text"/>
-          <button class="button-base copy-button" @click="copyLink()">复制</button>       
+          <button ref="copy_button" :data-clipboard-text="curr_share_link"
+                  class="button-base copy-button">复制</button>       
         </template>
         <button v-if="curr_quest['status'] !== 0" class="button-base  result-button" 
                 @click="showResult()">查看结果</button>
@@ -164,6 +165,7 @@ import { useStore } from 'vuex';
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import QRCode from 'qrcode';
+import Clipboard from 'clipboard';
 
 import InfoModal from '@/components/Modal-Info.vue';
 import ModifyQuestModal from '@/components/Modal-ModifyQuest.vue';
@@ -193,6 +195,9 @@ const QRCode_show = ref(false);
 const QRCode_url = ref('');
 const QRCode_container = ref(null);
 
+const copy_button = ref(null);
+let clipboard;
+
 const create_quest_show = ref(false);
 const edit_quest_show = ref(false);
 const edit_quest_title = ref('');
@@ -212,13 +217,14 @@ const delete_question_id = ref('');
 
 onMounted
 (async () => { 
-  await initQuestList(); 
+  await initQuestList();
   window.addEventListener('click', handleClickOutside);
 });
 
 onBeforeUnmount(() =>
 {
   window.removeEventListener('click', handleClickOutside);
+  if (clipboard) clipboard.destroy();    /* 移除剪贴板监听 */
 });
 
 const handleClickOutside = (event) =>
@@ -265,6 +271,7 @@ const switchQuest = async (index) =>
   await generateLink();    /* 生成当前问卷分享链接 */
   await generateQRCode();    /* 生成当前问卷分享二维码 */
   await getQuestionList();    /* 获取当前问卷问题 */
+  await initClipboard();  /* 初始化剪切板 */
 };
 
 const generateLink = async () =>
@@ -327,6 +334,32 @@ const getQuestionList = async () =>
   }
 };
 
+const initClipboard = async () =>
+{
+  if (clipboard) clipboard.destroy();
+  clipboard = new Clipboard(copy_button.value);
+  clipboard.on
+  (
+    'success', 
+    (e) => 
+    {
+      console.log('链接复制成功：', curr_share_link.value);
+      showInfoModal('success', '链接已复制到剪贴板', true);
+      e.clearSelection();
+    }
+  );
+
+  clipboard.on
+  (
+    'error', 
+    (e) => 
+    {
+      console.error('链接复制失败:', e);
+      showInfoModal('error', '链接复制失败，请稍后再试', true);
+    }
+  );
+};
+
 const showInfoModal = (type, message, show) =>
 {
   modal_type.value = type;
@@ -343,20 +376,6 @@ const toView = () =>
 };
 
 const showQRCode = () => { QRCode_show.value = !QRCode_show.value; };
-const copyLink = async () =>
-{
-  try
-  {
-    await navigator.clipboard.writeText(curr_share_link.value);
-    console.log('链接复制成功：', curr_share_link.value);
-    showInfoModal('success', '链接已复制到剪贴板', true);
-  }
-  catch (error)
-  {
-    console.error('链接复制失败:', error);
-    showInfoModal('error', '链接复制失败，请稍后再试', true);
-  }
-};
 
 const showPublish = () => { publish_show.value = true; };
 const showPause = () => { pause_show.value = true; };
