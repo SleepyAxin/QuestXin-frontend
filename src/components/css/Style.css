@@ -42,6 +42,7 @@
 }
 
 /* 图标 */
+.icon-logo     { background: url('@/assets/icon/Logo.svg'); }        /* LOGO图标 */
 .icon-user     { background: url('@/assets/icon/User.svg'); }        /* 用户图标 */
 .icon-email    { background: url('@/assets/icon/Email.svg'); }       /* 邮箱图标 */
 .icon-password { background: url('@/assets/icon/Password.svg'); }    /* 密码图标 */

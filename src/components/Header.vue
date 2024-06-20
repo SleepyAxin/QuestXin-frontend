@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="left-box">
-      <div class="img-logo" @click="Router.toHome"></div>
+      <div class="icon-logo img-logo" @click="Router.toHome"></div>
       <button class="web-title" @click="Router.toHome">问卷鑫</button>
     </div>
     <div v-if="user_info !== null" ref="dropdown_container">
@@ -111,7 +111,6 @@ header
 
 .img-logo
 {
-  background: var(--image-logo) no-repeat;
   background-size: cover;
   width: 30px;
   height: 30px;
