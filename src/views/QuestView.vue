@@ -268,10 +268,15 @@ const activeQuest = (index) =>
 const switchQuest = async (index) =>
 {
   curr_quest.value = quest_list.value[index];
-  await generateLink();    /* 生成当前问卷分享链接 */
-  await generateQRCode();    /* 生成当前问卷分享二维码 */
+
   await getQuestionList();    /* 获取当前问卷问题 */
-  await initClipboard();  /* 初始化剪切板 */
+
+  if (curr_quest.value['status'] === 1)
+  {
+    await generateLink();      /* 生成当前问卷分享链接 */
+    await generateQRCode();    /* 生成当前问卷分享二维码 */
+    await initClipboard();     /* 初始化剪切板 */
+  }
 };
 
 const generateLink = async () =>
@@ -294,7 +299,7 @@ const generateQRCode = async () =>
   } 
   catch (error) 
   {
-    console.error('二维码生成失败：', error)
+    console.error('二维码生成失败：', error);
   }
 };
 
@@ -337,7 +342,6 @@ const getQuestionList = async () =>
 const initClipboard = async () =>
 {
   if (clipboard) clipboard.destroy();
-  if (curr_quest.value['status'] !== 1) return;
   clipboard = new Clipboard(copy_button.value);
   clipboard.on
   (
@@ -409,10 +413,12 @@ const changeStatus = async (status) =>
     if (response.status === 200)
     {
       curr_quest.value['status'] = status;
-      initClipboard();
       switch (curr_quest.value['status'])
       {
         case 1:
+          await generateLink();      /* 生成当前问卷分享链接 */
+          await generateQRCode();    /* 生成当前问卷分享二维码 */
+          await initClipboard();     /* 初始化剪切板 */
           console.log('问卷已发布：', curr_quest.value);
           showInfoModal('success', '问卷已发布', true);
           break;
