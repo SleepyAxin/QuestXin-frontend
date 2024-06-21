@@ -1,11 +1,11 @@
 <template>
   <div v-if="quest_show" class="questionnaire">
-    <div class="quest-main">
+    <div :class="['quest-main', {'small-screen': isSmallScreen}]">
       <h2 class="quest-title">{{ curr_quest['title'] }}</h2>
       <h3 class="quest-desc">{{ curr_quest['desc'] }}</h3>
       <div class="quest-underline"></div>
       <div v-for="(question, x) in curr_question_list" :key="x" class="question-part">
-        <div class="question-card">
+        <div :class="['question-card', {'small-screen': isSmallScreen}]">
           <div class="question-info" :id="'question-' + (x + 1)">
             <label v-if="question['is_required'] === true" class="question-required">*</label>
             <h4 class="question-index">{{x+1}}.</h4>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onBeforeUnmount } from "vue";
 import { useRoute } from 'vue-router';
 import axios from "axios";
 import API from "@/components/js/API.js";
@@ -100,14 +100,26 @@ const to_message = ref('');
 
 const curr_ip = ref('');
 
+const isSmallScreen = ref(window.innerWidth < 700);
+
 onMounted
 (async () =>
 {
   window.addEventListener('hashchange', handleHashChange);
+  window.addEventListener('resize', handleResize);
   await initQuest();    /* 装载问卷信息 */
   await initQuestions();    /* 装载问卷问题 */
   await getIP();    /* 获取IP地址 */
 });
+
+onBeforeUnmount(() => {
+  window.removeEventListener('hashchange', handleHashChange);
+  window.removeEventListener('resize', handleResize); // 新增：移除监听器
+});
+
+const handleResize = () => {
+  isSmallScreen.value = window.innerWidth < 700; // 新增：更新 isSmallScreen 状态
+};
 
 const handleHashChange = () => 
   {
@@ -384,6 +396,14 @@ const getIP = async () =>
   width: 60%;
   margin-top: 40px;
   background-color: transparent;
+}
+
+.quest-main.small-screen {
+  width: 85%;
+}
+
+.question-card.small-screen {
+  width: 95%;
 }
 
 .question-card
