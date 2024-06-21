@@ -187,6 +187,9 @@ const submitQuestion = () =>
     }
   }
 
+  if (type.value === 3)
+    options.value = [];
+
   const question =
       {
         'title': title.value,

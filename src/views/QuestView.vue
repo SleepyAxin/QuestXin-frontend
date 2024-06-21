@@ -337,6 +337,7 @@ const getQuestionList = async () =>
 const initClipboard = async () =>
 {
   if (clipboard) clipboard.destroy();
+  if (curr_quest.value['status'] !== 1) return;
   clipboard = new Clipboard(copy_button.value);
   clipboard.on
   (
@@ -408,7 +409,7 @@ const changeStatus = async (status) =>
     if (response.status === 200)
     {
       curr_quest.value['status'] = status;
-
+      initClipboard();
       switch (curr_quest.value['status'])
       {
         case 1:

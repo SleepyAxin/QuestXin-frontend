@@ -112,10 +112,11 @@ header
 .img-logo
 {
   background-size: cover;
+  background-position: center;
   width: 30px;
   height: 30px;
   cursor: pointer;
-  margin: 0;
+  margin-right: 10px;
 }
 
 .web-title
