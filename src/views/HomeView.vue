@@ -35,7 +35,13 @@
       </div>
     </div>
     <div class="section section3">
-      <p>Content for the third section goes here.</p>
+      <div class="container">
+        <img src="@/assets/demo.png" alt="3D Corner View Image" class="image-3d">
+        <div class="description">
+          <p>我们提供了轻松上手的问卷创作与共享功能，能够帮助您快速收集和分析数据。</p>
+          <a href="/quest" class="experience-button">立即体验</a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +50,7 @@
 </script>
 
 <style scoped>
-.home 
+.home
 {
   position: fixed;
   top: 0;
@@ -56,13 +62,13 @@
   z-index: -1;
 }
 
-.section 
+.section
 {
   padding: 20px;
   text-align: center;
 }
 
-.section-intro 
+.section-intro
 {
   position: relative;
   /* 添加渐变背景 */
@@ -78,7 +84,7 @@
   overflow: hidden;
 }
 
-.section-intro h1 
+.section-intro h1
 {
   position: absolute;
   top: 45%;
@@ -95,7 +101,7 @@
   -webkit-text-stroke: 1px #62f5c9; /* 添加描边 */
 }
 
-.section-intro h2 
+.section-intro h2
 {
   position: absolute;
   top: 63%;
@@ -112,7 +118,7 @@
   color: #ffffff;
 }
 
-.section2 
+.section2
 {
   height: 600px;
   min-width: 900px;
@@ -120,7 +126,7 @@
   padding: 40px 20px;
 }
 
-.Title-RD-Team 
+.Title-RD-Team
 {
   font-size: 4em;
   font-weight: 600;
@@ -129,19 +135,19 @@
   text-align: center;
 }
 
-.team-members 
+.team-members
 {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-.member 
+.member
 {
   text-align: center;
 }
 
-.member-photo 
+.member-photo
 {
   width: 200px;
   height: 200px;
@@ -156,54 +162,110 @@
   transform: rotate(360deg);    /* 鼠标悬停时旋转180度 */
 }
 
-.member-info 
+.member-info
 {
   text-align: center;
 }
 
-.member-name 
+.member-name
 {
   font-size: 1.5em;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.member-title 
+.member-title
 {
   font-size: 1.1em;
   color: #666;
 }
 
-.member-subtitle 
+.member-subtitle
 {
   font-family: "Cascadia Mono", monospace;
   font-size: 1em;
   color: #999;
 }
 
-.member-1-photo 
+.member-1-photo
 {
   background-image: var(--image-member-1);
   background-size: cover;
   background-position: center;
 }
 
-.member-2-photo 
+.member-2-photo
 {
   background-image: var(--image-member-2);
   background-size: cover;
   background-position: center;
 }
 
-.member-3-photo 
+.member-3-photo
 {
   background-image: var(--image-member-3);
   background-size: cover;
   background-position: center;
 }
 
-.section3 
+.section3
 {
-  background-color: #e2e2e2;
+  height: 100vh;
+  min-width: 900px;
+  background-color: #ffffff;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: -20px;
+  align-items: center;
+  height: 100vh;
+  perspective: 1000px; /* 添加透视效果 */
+}
+
+.image-3d {
+  width: 800px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.5s, box-shadow 0.5s;
+  transform: rotateX(25deg) rotateY(-15deg) rotate(5deg); /* 初始旋转角度 */
+}
+
+.image-3d:hover {
+  transform: rotateX(0deg) rotateY(0deg) translateY(-10px);
+  box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.description {
+  margin-left: 130px;
+  max-width: 300px;
+  min-width: 300px;
+  text-align: left;
+}
+
+.description p {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #333;
+}
+
+.experience-button {
+  display: inline-block;
+  margin-top: 50px;
+  padding: 20px 50px;
+  font-size: 1.5em;
+  color: white;
+  background: linear-gradient(to right, #00BFFF, #1E90FF); /* 悬停时的渐变色 */
+
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.experience-button:hover {
+  background: linear-gradient(to right, #87CEEB, #00BFFF); /* 天蓝渐变色 */
 }
 </style>
