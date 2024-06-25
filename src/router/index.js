@@ -85,15 +85,9 @@ router.beforeEach((to, from, next) =>
     else
     {
         /* 如果访问的是问卷管理页面，则跳转到登录界面 */
-        if (to.name === 'quest')
+        if (to.name === 'quest' || to.name === 'user' || to.name === 'view' || to.name === 'result')
             next({ name: 'login' });
         /* 否则放行 */
-        else
-            next();
-
-        /* 如果访问的是问卷的结果/预览界面，则跳转到首页 */
-        if (to.name === 'view' || to.name === 'result')
-            next({ name: 'home'});
         else
             next();
     }
